@@ -1,0 +1,24 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.o
+
+# Executables
+FinanceManager
+FinanceManager.exe
+*.out
+*.app
+
+# Local Application Data (Keep the directories, ignore the contents)
+data/*.dat
+reports/*.txt
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
