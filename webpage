@@ -3,44 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ledger — Personal Finance Manager</title>
+<title>Paisa — Personal Finance Manager</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,380;9..144,480;9..144,600;9..144,680&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js" referrerpolicy="no-referrer"></script>
 <style>
 /* ============================================================
    DESIGN TOKENS
-   A leather ledger book, brass instruments, engraved banknotes.
-   Not a dashboard template — an accountant's desk at night.
+   A modern Indian fintech look: crisp white cards on a cool light
+   background, a bold cyan-to-navy brand blue, rounded corners, and
+   confident, friendly typography.
    ============================================================ */
 :root{
-  --bg:            #0E1D18;
-  --bg-panel:      #142A22;
-  --bg-panel-2:    #1B362C;
-  --bg-inset:      #0A1611;
-  --line:          rgba(237,234,224,0.09);
-  --line-strong:   rgba(237,234,224,0.18);
-  --ink:           #EDEAE0;
-  --ink-muted:     #9FB3A8;
-  --ink-faint:     #66806F;
-  --gold:          #C9A24B;
-  --gold-bright:   #E4C067;
-  --gold-dim:      rgba(201,162,75,0.14);
-  --income:        #5FBE8A;
-  --income-dim:    rgba(95,190,138,0.14);
-  --expense:       #D9694C;
-  --expense-dim:   rgba(217,105,76,0.14);
-  --warn:          #E0B84B;
+  --bg:            #F1F5F9;
+  --bg-panel:      #FFFFFF;
+  --bg-panel-2:    #FFFFFF;
+  --bg-inset:      #EEF2F7;
+  --line:          rgba(15,23,42,0.08);
+  --line-strong:   rgba(15,23,42,0.14);
+  --ink:           #0F172A;
+  --ink-muted:     #64748B;
+  --ink-faint:     #94A3B8;
+  --gold:          #00BAF2;
+  --gold-bright:   #0089D2;
+  --gold-dim:      rgba(0,186,242,0.12);
+  --navy:          #002970;
+  --income:        #00B899;
+  --income-dim:    rgba(0,184,153,0.12);
+  --expense:       #FF5262;
+  --expense-dim:   rgba(255,82,98,0.12);
+  --warn:          #FFA000;
+  --warn-dim:      rgba(255,160,0,0.14);
+  --teal:          #0089D2;
+  --mauve:         #7C4DFF;
 
-  --radius-sm: 5px;
-  --radius-md: 9px;
-  --radius-lg: 15px;
-  --shadow-lift: 0 24px 60px -24px rgba(0,0,0,0.65);
-  --shadow-soft: 0 8px 24px -12px rgba(0,0,0,0.5);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-lift: 0 24px 48px -16px rgba(15,23,42,0.22);
+  --shadow-soft: 0 4px 20px -6px rgba(15,23,42,0.08);
+  --shadow-brand: 0 12px 28px -10px rgba(0,186,242,0.45);
 
-  --font-display: 'Fraunces', Georgia, 'Iowan Old Style', serif;
-  --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
 
   --dur-1: 140ms;
@@ -58,8 +65,8 @@ html,body{ height:100%; }
 body{
   margin:0;
   background:
-    radial-gradient(ellipse 1200px 800px at 12% -10%, rgba(201,162,75,0.07), transparent 60%),
-    radial-gradient(ellipse 900px 700px at 100% 0%, rgba(95,190,138,0.05), transparent 55%),
+    radial-gradient(ellipse 1200px 800px at 12% -10%, rgba(0,186,242,0.08), transparent 60%),
+    radial-gradient(ellipse 900px 700px at 100% 0%, rgba(0,184,153,0.05), transparent 55%),
     var(--bg);
   color: var(--ink);
   font-family: var(--font-body);
@@ -67,7 +74,7 @@ body{
   font-size: 14px;
   line-height: 1.5;
 }
-h1,h2,h3,h4{ font-family: var(--font-display); font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+h1,h2,h3,h4{ font-family: var(--font-display); font-weight: 600; margin: 0; letter-spacing: -0.015em; }
 p{ margin:0; }
 button{ font-family: inherit; }
 a{ color: inherit; }
@@ -92,7 +99,7 @@ a{ color: inherit; }
 
 /* ---- Sidebar ---- */
 .sidebar{
-  background: linear-gradient(180deg, var(--bg-panel), var(--bg-inset));
+  background: var(--bg-panel);
   border-right: 1px solid var(--line);
   padding: 26px 18px;
   display: flex;
@@ -103,39 +110,42 @@ a{ color: inherit; }
 }
 .brand{ display:flex; align-items:center; gap:11px; padding: 4px 6px 26px; }
 .brand-mark{
-  width:36px; height:36px; border-radius: 9px;
-  background: linear-gradient(150deg, var(--gold-bright), var(--gold) 60%, #8a6d2e);
+  width:38px; height:38px; border-radius: 12px;
+  background: linear-gradient(150deg, #33C9F5, var(--gold) 55%, var(--navy));
   display:flex; align-items:center; justify-content:center;
-  font-family: var(--font-display); font-weight:700; font-size:16px; color:#1a1408;
-  box-shadow: 0 6px 16px -6px rgba(201,162,75,0.55), inset 0 1px 0 rgba(255,255,255,0.35);
+  font-family: var(--font-display); font-weight:800; font-size:17px; color:#FFFFFF;
+  box-shadow: var(--shadow-brand), inset 0 1px 0 rgba(255,255,255,0.4);
   flex-shrink:0;
 }
-.brand-text h1{ font-size: 16.5px; color: var(--ink); line-height:1.1; }
-.brand-text span{ display:block; font-size: 10px; color: var(--ink-faint); margin-top:3px; letter-spacing:0.05em; }
+.brand-text h1{ font-size: 17px; color: var(--ink); line-height:1.1; font-weight:700; }
+.brand-text span{ display:block; font-size: 10px; color: var(--ink-faint); margin-top:3px; letter-spacing:0.06em; font-weight:600; }
 
 .nav{ display:flex; flex-direction:column; gap:2px; margin-top: 6px; }
 .nav-item{
   display:flex; align-items:center; gap:11px;
   padding: 10px 12px; border-radius: var(--radius-md);
   color: var(--ink-muted); text-decoration:none; cursor:pointer;
-  font-size: 13.4px; font-weight: 500;
+  font-size: 13.4px; font-weight: 600;
   border: 1px solid transparent;
   background: transparent;
   transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
   position: relative;
 }
 .nav-item svg{ width:16px; height:16px; flex-shrink:0; opacity:0.85; }
-.nav-item:hover{ background: rgba(237,234,224,0.04); color: var(--ink); }
+.nav-item:hover{ background: rgba(0,186,242,0.06); color: var(--gold-bright); }
 .nav-item.active{
-  background: var(--gold-dim);
-  color: var(--gold-bright);
-  border-color: rgba(201,162,75,0.25);
+  background: linear-gradient(135deg, var(--gold), var(--navy));
+  color: #FFFFFF;
+  border-color: transparent;
+  box-shadow: var(--shadow-brand);
 }
+.nav-item.active svg{ opacity:1; }
 .nav-item .kbd{ margin-left:auto; font-family: var(--font-mono); font-size:10px; color: var(--ink-faint); border:1px solid var(--line-strong); border-radius:4px; padding:1px 5px; }
+.nav-item.active .kbd{ color:rgba(255,255,255,0.75); border-color:rgba(255,255,255,0.3); }
 
 .sidebar-foot{ margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); }
 .clock{ font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted); }
-.clock .date{ color: var(--ink); font-weight:500; }
+.clock .date{ color: var(--ink); font-weight:600; }
 
 /* ---- Main ---- */
 .main{ min-width:0; display:flex; flex-direction:column; }
@@ -146,7 +156,7 @@ a{ color: inherit; }
   flex-wrap: wrap;
 }
 .topbar-title .eyebrow{ margin-bottom:4px; }
-.topbar-title h2{ font-size: 24px; color: var(--ink); }
+.topbar-title h2{ font-size: 24px; color: var(--ink); font-weight:700; }
 .topbar-actions{ display:flex; gap:10px; align-items:center; }
 
 .view-root{ padding: 4px 34px 60px; flex:1; }
@@ -157,30 +167,30 @@ a{ color: inherit; }
 .btn{
   display:inline-flex; align-items:center; gap:8px; justify-content:center;
   padding: 9px 16px; border-radius: var(--radius-md);
-  font-size: 13px; font-weight: 600; cursor:pointer;
+  font-size: 13px; font-weight: 700; cursor:pointer;
   border: 1px solid var(--line-strong);
-  background: rgba(237,234,224,0.03);
+  background: #FFFFFF;
   color: var(--ink);
   transition: transform var(--dur-1) var(--ease), background var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease);
   white-space: nowrap;
 }
 .btn svg{ width:14px; height:14px; }
-.btn:hover{ background: rgba(237,234,224,0.07); border-color: rgba(237,234,224,0.28); }
+.btn:hover{ background: rgba(15,23,42,0.03); border-color: rgba(15,23,42,0.24); }
 .btn:active{ transform: translateY(1px) scale(0.98); }
 .btn:focus-visible{ outline: 2px solid var(--gold-bright); outline-offset: 2px; }
 
 .btn-primary{
-  background: linear-gradient(155deg, var(--gold-bright), var(--gold));
-  color: #1a1408; border-color: transparent;
-  box-shadow: 0 10px 24px -10px rgba(201,162,75,0.55);
+  background: linear-gradient(135deg, #33C9F5, var(--gold) 55%, var(--navy));
+  color: #FFFFFF; border-color: transparent;
+  box-shadow: var(--shadow-brand);
 }
-.btn-primary:hover{ filter: brightness(1.06); box-shadow: 0 12px 28px -8px rgba(201,162,75,0.7); }
+.btn-primary:hover{ filter: brightness(1.05); box-shadow: 0 14px 32px -8px rgba(0,186,242,0.55); }
 
-.btn-income{ background: linear-gradient(155deg, #74d19f, var(--income)); color:#07231536; color:#0B2418; border-color:transparent; }
-.btn-expense{ background: linear-gradient(155deg, #e58868, var(--expense)); color:#2b0f08; border-color:transparent; }
+.btn-income{ background: linear-gradient(135deg, #35D8B5, var(--income)); color:#FFFFFF; border-color:transparent; box-shadow: 0 10px 22px -10px rgba(0,184,153,0.5); }
+.btn-expense{ background: linear-gradient(135deg, #FF8A94, var(--expense)); color:#FFFFFF; border-color:transparent; box-shadow: 0 10px 22px -10px rgba(255,82,98,0.5); }
 .btn-ghost{ background: transparent; border-color: transparent; color: var(--ink-muted); }
-.btn-ghost:hover{ color: var(--ink); background: rgba(237,234,224,0.05); }
-.btn-danger{ background: transparent; border-color: rgba(217,105,76,0.4); color: var(--expense); }
+.btn-ghost:hover{ color: var(--ink); background: rgba(15,23,42,0.045); }
+.btn-danger{ background: transparent; border-color: rgba(255,82,98,0.35); color: var(--expense); }
 .btn-danger:hover{ background: var(--expense-dim); }
 .btn-sm{ padding: 6px 11px; font-size: 12px; border-radius: var(--radius-sm); }
 .btn-icon{ padding: 8px; border-radius: var(--radius-sm); }
@@ -190,14 +200,14 @@ a{ color: inherit; }
    CARDS / PANELS
    ============================================================ */
 .panel{
-  background: linear-gradient(175deg, var(--bg-panel), var(--bg-panel-2) 130%);
+  background: var(--bg-panel);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
 }
 .panel-pad{ padding: 22px 24px; }
 .panel-head{ display:flex; align-items:center; justify-content:space-between; padding: 18px 22px; border-bottom: 1px solid var(--line); }
-.panel-head h3{ font-size: 15px; color: var(--ink); }
+.panel-head h3{ font-size: 15px; color: var(--ink); font-weight:700; }
 .panel-head .eyebrow{ margin-bottom: 3px; }
 
 .grid{ display:grid; gap: 16px; }
@@ -225,19 +235,27 @@ a{ color: inherit; }
    ============================================================ */
 .hero{
   position: relative; overflow:hidden;
-  padding: 30px 30px 26px;
+  padding: 32px 32px 28px;
+  background: linear-gradient(120deg, #00BAF2 0%, #0089D2 45%, var(--navy) 100%);
+  border: none;
+  color: #FFFFFF;
+  box-shadow: var(--shadow-brand);
 }
 .hero::before{
   content:''; position:absolute; inset:0; pointer-events:none;
-  background: radial-gradient(560px 260px at 88% -10%, rgba(201,162,75,0.16), transparent 65%);
+  background:
+    radial-gradient(420px 220px at 92% -20%, rgba(255,255,255,0.22), transparent 65%),
+    radial-gradient(circle at 12px 12px, rgba(255,255,255,0.10) 1.5px, transparent 1.5px);
+  background-size: auto, 22px 22px;
 }
-.hero-eyebrow{ display:flex; align-items:center; gap:10px; margin-bottom: 10px; }
-.hero-figure{ font-family: var(--font-display); font-weight: 600; font-size: 58px; line-height:1; display:flex; align-items:baseline; gap:10px; }
-.hero-figure .sign{ font-size: 32px; opacity:0.7; }
-.hero-figure .unit{ font-family: var(--font-mono); font-size: 15px; color: var(--ink-faint); font-weight:500; margin-left:4px;}
-.hero-sub{ margin-top:10px; color: var(--ink-muted); font-size: 13px; }
-.hero-sub b{ color: var(--ink); font-weight:600; }
-.hero-sparkline{ position:absolute; right:26px; bottom:0; width: 46%; height: 92px; opacity:0.9; }
+.hero-eyebrow{ display:flex; align-items:center; gap:10px; margin-bottom: 10px; position:relative; }
+.hero-eyebrow .eyebrow{ color: rgba(255,255,255,0.75); }
+.hero-figure{ font-family: var(--font-display); font-weight: 700; font-size: 50px; line-height:1; display:flex; align-items:baseline; gap:10px; position:relative; color:#fff; }
+.hero-figure .sign{ font-size: 30px; opacity:0.85; }
+.hero-figure .unit{ font-family: var(--font-mono); font-size: 15px; color: rgba(255,255,255,0.7); font-weight:500; margin-left:4px;}
+.hero-sub{ margin-top:10px; color: rgba(255,255,255,0.82); font-size: 13px; position:relative; }
+.hero-sub b{ color: #fff; font-weight:700; }
+.hero-sparkline{ position:absolute; right:26px; bottom:0; width: 46%; height: 92px; opacity:0.55; }
 
 .stat-card{ padding: 18px 20px; display:flex; flex-direction:column; gap: 10px; }
 .stat-card .stat-top{ display:flex; align-items:center; justify-content:space-between; }
@@ -247,7 +265,7 @@ a{ color: inherit; }
 .stat-card .stat-delta{ font-size: 11.5px; font-weight:600; display:inline-flex; align-items:center; gap:4px; width:fit-content; padding: 2px 8px; border-radius: 20px; }
 .delta-up{ color: var(--income); background: var(--income-dim); }
 .delta-down{ color: var(--expense); background: var(--expense-dim); }
-.delta-flat{ color: var(--ink-faint); background: rgba(237,234,224,0.05); }
+.delta-flat{ color: var(--ink-faint); background: rgba(15,23,42,0.05); }
 
 /* ============================================================
    LEDGER TABLE
@@ -266,7 +284,7 @@ a{ color: inherit; }
   border-bottom: 1px solid var(--line);
   transition: background var(--dur-1) var(--ease);
 }
-.ledger-table tbody tr.tx-row:hover{ background: rgba(237,234,224,0.025); }
+.ledger-table tbody tr.tx-row:hover{ background: rgba(15,23,42,0.025); }
 .ledger-table td{ padding: 11px 10px; vertical-align: middle; font-size: 13px; }
 .tx-row.tx-enter{ animation: rowIn var(--dur-3) var(--ease); }
 @keyframes rowIn{ from{ opacity:0; transform: translateY(-6px); background: var(--gold-dim);} to{ opacity:1; transform:none; } }
@@ -291,7 +309,7 @@ a{ color: inherit; }
   width:26px;height:26px; border-radius:6px; display:flex; align-items:center; justify-content:center;
   border:1px solid transparent; background:transparent; color: var(--ink-faint); cursor:pointer;
 }
-.icon-btn:hover{ background: rgba(237,234,224,0.07); color: var(--ink); }
+.icon-btn:hover{ background: rgba(15,23,42,0.07); color: var(--ink); }
 .icon-btn.danger:hover{ background: var(--expense-dim); color: var(--expense); }
 .icon-btn svg{ width:13px;height:13px; }
 
@@ -309,7 +327,7 @@ input, select, textarea{
 }
 input.mono-input, select.mono-input{ font-family: var(--font-mono); }
 input:focus, select:focus, textarea:focus{ border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-dim); }
-input[type=date]{ color-scheme: dark; }
+input[type=date]{ color-scheme: light; }
 .field.invalid input, .field.invalid select{ border-color: var(--expense); box-shadow: 0 0 0 3px var(--expense-dim); }
 ::placeholder{ color: var(--ink-faint); }
 
@@ -350,9 +368,9 @@ input[type=date]{ color-scheme: dark; }
 .drawer-foot .btn{ flex:1; }
 
 .card-index{
-  border: 1.5px dashed var(--line-strong); border-radius: var(--radius-md);
-  padding: 14px 16px; background: repeating-linear-gradient(var(--bg-inset), var(--bg-inset) 27px, rgba(237,234,224,0.035) 28px);
-  font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint);
+  border: 1px solid var(--line); border-radius: var(--radius-md);
+  padding: 12px 16px; background: var(--gold-dim);
+  font-family: var(--font-mono); font-size: 11.5px; color: var(--gold-bright); font-weight:500;
 }
 
 .modal-wrap{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:50; pointer-events:none; }
@@ -368,23 +386,38 @@ input[type=date]{ color-scheme: dark; }
 .modal-actions .btn{ flex:1; }
 
 /* ============================================================
-   STAMP CONFIRMATION (signature moment)
+   SUCCESS CONFIRMATION (signature moment)
+   A payment-app-style checkmark card, not a rubber stamp — fits a
+   light, friendly fintech UI far better than ink-on-paper did.
    ============================================================ */
 .stamp-layer{ position:fixed; inset:0; pointer-events:none; z-index:60; display:flex; align-items:center; justify-content:center; }
 .stamp{
-  font-family: var(--font-display); font-weight:700; font-size: 30px; letter-spacing: 0.06em;
-  color: var(--expense); border: 4px solid var(--expense); border-radius: 10px; padding: 10px 26px;
-  text-transform: uppercase; opacity:0; transform: scale(2.6) rotate(-14deg);
-  mix-blend-mode: screen; filter: blur(0px);
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+  background:#FFFFFF; padding:30px 44px; border-radius:24px;
+  box-shadow: var(--shadow-lift);
+  opacity:0; transform: scale(0.7) translateY(10px);
 }
-.stamp.income{ color: var(--income); border-color: var(--income); }
-.stamp.play{ animation: stampThud 720ms cubic-bezier(.2,.9,.25,1) forwards; }
-@keyframes stampThud{
-  0%{ opacity:0; transform: scale(2.6) rotate(-14deg); }
-  55%{ opacity:1; transform: scale(0.96) rotate(-8deg); }
-  70%{ transform: scale(1.05) rotate(-9deg); }
-  100%{ opacity:0; transform: scale(1) rotate(-8deg); }
+.stamp-badge{
+  width:68px; height:68px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(135deg, #33C9F5, var(--gold) 55%, var(--navy));
+  box-shadow: var(--shadow-brand);
 }
+.stamp.income .stamp-badge{ background: linear-gradient(135deg, #35D8B5, var(--income)); box-shadow: 0 12px 26px -8px rgba(0,184,153,0.55); }
+.stamp-badge svg{ width:30px; height:30px; }
+.stamp-check-path{ stroke-dasharray:40; stroke-dashoffset:40; }
+.stamp-label{ font-family: var(--font-display); font-weight:700; font-size:16px; color:var(--ink); }
+.stamp-sub{ font-family: var(--font-mono); font-size:12.5px; color:var(--ink-muted); }
+.stamp.play{ animation: stampPop 1400ms cubic-bezier(.2,.9,.25,1) forwards; }
+.stamp.play .stamp-check-path{ animation: checkDraw 460ms 260ms ease forwards; }
+@keyframes stampPop{
+  0%{ opacity:0; transform: scale(0.7) translateY(10px); }
+  22%{ opacity:1; transform: scale(1.06) translateY(0); }
+  34%{ transform: scale(0.98); }
+  42%{ transform: scale(1); }
+  84%{ opacity:1; transform: scale(1); }
+  100%{ opacity:0; transform: scale(0.96) translateY(-6px); }
+}
+@keyframes checkDraw{ to{ stroke-dashoffset:0; } }
 
 /* ============================================================
    TOAST
@@ -429,7 +462,7 @@ input[type=date]{ color-scheme: dark; }
    ============================================================ */
 .divider{ height:1px; background: var(--line); border:none; margin: 4px 0; }
 .kpi-row{ display:flex; gap:20px; flex-wrap:wrap; }
-.pill{ padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; background: rgba(237,234,224,0.06); color: var(--ink-muted); }
+.pill{ padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; background: rgba(15,23,42,0.06); color: var(--ink-muted); }
 .pill.gold{ background: var(--gold-dim); color: var(--gold-bright); }
 .pill.income{ background: var(--income-dim); color: var(--income); }
 .pill.expense{ background: var(--expense-dim); color: var(--expense); }
@@ -437,7 +470,7 @@ input[type=date]{ color-scheme: dark; }
 .statement b{ color: var(--ink); }
 .health-score{ font-family: var(--font-display); font-size:44px; font-weight:600; }
 
-.skeleton{ background: linear-gradient(90deg, var(--bg-panel), var(--bg-panel-2), var(--bg-panel)); background-size:200% 100%; animation: shimmer 1.4s infinite; border-radius:8px; }
+.skeleton{ background: linear-gradient(90deg, var(--bg-inset), #F8FAFC, var(--bg-inset)); background-size:200% 100%; animation: shimmer 1.4s infinite; border-radius:8px; }
 @keyframes shimmer{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
 
 @media print{
@@ -460,6 +493,134 @@ input[type=date]{ color-scheme: dark; }
   .view-root{ padding: 4px 16px 40px; }
   .topbar{ padding: 18px 16px 12px; }
 }
+
+/* ============================================================
+   VIEW TRANSITIONS
+   ============================================================ */
+@keyframes viewIn{ from{ opacity:0; transform: translateY(8px);} to{ opacity:1; transform:none; } }
+.view-anim{ animation: viewIn 380ms var(--ease); }
+
+/* ============================================================
+   HOVER TILT (stat cards, account cards)
+   ============================================================ */
+.tilt{ transition: transform 260ms var(--ease), box-shadow 260ms var(--ease); will-change: transform; }
+.tilt:hover{ box-shadow: var(--shadow-lift); }
+
+/* ============================================================
+   COMMAND PALETTE
+   ============================================================ */
+.cmdk-wrap{
+  position:fixed; inset:0; z-index:90; display:flex; align-items:flex-start; justify-content:center;
+  padding-top: 12vh; pointer-events:none; opacity:0; transition: opacity var(--dur-2) var(--ease);
+  background: rgba(6,12,9,0.55); backdrop-filter: blur(3px);
+}
+.cmdk-wrap.open{ opacity:1; pointer-events:auto; }
+.cmdk{
+  width: 560px; max-width: 92vw; background: linear-gradient(175deg, var(--bg-panel-2), var(--bg-panel));
+  border:1px solid var(--line-strong); border-radius: var(--radius-lg); box-shadow: var(--shadow-lift);
+  transform: translateY(-14px) scale(0.98); transition: transform var(--dur-2) var(--ease); overflow:hidden;
+}
+.cmdk-wrap.open .cmdk{ transform:none; }
+.cmdk-input-row{ display:flex; align-items:center; gap:10px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+.cmdk-input-row svg{ width:16px; height:16px; color: var(--gold); flex-shrink:0; }
+.cmdk-input-row input{ border:none; background:transparent; font-size:16px; padding:0; box-shadow:none !important; }
+.cmdk-input-row input:focus{ box-shadow:none; }
+.cmdk-hint{ font-size:10px; color: var(--ink-faint); border:1px solid var(--line-strong); padding:2px 6px; border-radius:5px; font-family: var(--font-mono); flex-shrink:0; }
+.cmdk-body{ max-height: 360px; overflow-y:auto; padding: 8px; }
+.cmdk-section-label{ font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color: var(--ink-faint); padding: 10px 10px 4px; }
+.cmdk-item{ display:flex; align-items:center; gap:11px; padding:10px 11px; border-radius: var(--radius-sm); cursor:pointer; color: var(--ink-muted); }
+.cmdk-item svg{ width:15px; height:15px; opacity:0.8; }
+.cmdk-item:hover, .cmdk-item.sel{ background: var(--gold-dim); color: var(--gold-bright); }
+.cmdk-item .cmdk-sub{ margin-left:auto; font-size:11px; color: var(--ink-faint); font-family: var(--font-mono); }
+.cmdk-preview{ margin: 6px 8px 12px; padding: 14px 16px; border-radius: var(--radius-md); border:1px dashed var(--line-strong); background: var(--bg-inset); }
+.cmdk-preview .row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.cmdk-preview .amt{ font-family: var(--font-mono); font-size: 22px; font-weight:600; }
+.cmdk-empty{ text-align:center; padding: 30px 10px; color: var(--ink-faint); font-size:12.5px; }
+
+/* ============================================================
+   ACCOUNTS
+   ============================================================ */
+.account-card{ padding: 18px 20px; display:flex; flex-direction:column; gap:12px; cursor:default; }
+.account-card .acc-top{ display:flex; align-items:center; gap:10px; }
+.acc-dot{ width:11px; height:11px; border-radius:4px; flex-shrink:0; }
+.acc-name{ font-weight:600; font-size:13.5px; }
+.acc-bal{ font-family: var(--font-mono); font-size:22px; font-weight:600; }
+.acc-meta{ font-size:11px; color: var(--ink-faint); }
+.acc-actions{ display:flex; gap:6px; margin-top:auto; }
+
+.add-account-card{
+  border: 1.5px dashed var(--line-strong); border-radius: var(--radius-lg); display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:8px; color: var(--ink-faint); cursor:pointer; min-height: 140px; transition: all var(--dur-1) var(--ease);
+}
+.add-account-card:hover{ border-color: var(--gold); color: var(--gold-bright); background: var(--gold-dim); }
+
+/* ============================================================
+   RECURRING
+   ============================================================ */
+.recurring-row{ display:flex; align-items:center; gap:14px; padding: 13px 4px; border-bottom:1px solid var(--line); }
+.recurring-row:last-child{ border-bottom:none; }
+.rec-icon{ width:34px;height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.rec-icon svg{ width:16px;height:16px; }
+.rec-info{ flex:1; min-width:0; }
+.rec-info .rec-title{ font-size:13.5px; font-weight:600; }
+.rec-info .rec-sub{ font-size:11.5px; color: var(--ink-faint); }
+.rec-amt{ font-family: var(--font-mono); font-weight:600; font-size:14px; }
+.rec-toggle{ width:36px; height:20px; border-radius:20px; background: var(--bg-inset); border:1px solid var(--line-strong); position:relative; cursor:pointer; flex-shrink:0; }
+.rec-toggle::after{ content:''; position:absolute; top:1px; left:1px; width:16px; height:16px; border-radius:50%; background: var(--ink-faint); transition: all var(--dur-1) var(--ease); }
+.rec-toggle.active{ background: var(--income-dim); border-color: var(--income); }
+.rec-toggle.active::after{ left: 17px; background: var(--income); }
+
+.upcoming-chip{ display:flex; justify-content:space-between; align-items:center; padding:9px 12px; border-radius: var(--radius-sm); background: var(--bg-inset); margin-bottom:7px; font-size:12.5px; }
+
+/* ============================================================
+   HEATMAP
+   ============================================================ */
+.heatmap-grid{ display:grid; grid-auto-flow:column; grid-template-rows: repeat(7, 1fr); gap:3px; overflow-x:auto; padding-bottom:6px; }
+.heatmap-cell{ width:13px; height:13px; border-radius:3px; background: var(--bg-inset); border:1px solid var(--line); }
+.heatmap-legend{ display:flex; align-items:center; gap:5px; font-size:10.5px; color: var(--ink-faint); margin-top:8px; }
+.heatmap-legend .heatmap-cell{ width:10px;height:10px; }
+
+/* ============================================================
+   SANKEY
+   ============================================================ */
+.sankey-node-label{ font-family: var(--font-mono); font-size: 10px; fill: var(--ink-muted); }
+.sankey-node-label.strong{ fill: var(--ink); font-weight:600; }
+
+/* ============================================================
+   RECAP ("Year in Money")
+   ============================================================ */
+.recap-overlay{
+  position:fixed; inset:0; z-index:80; overflow-y:auto;
+  background: radial-gradient(ellipse 900px 600px at 50% 0%, rgba(201,162,75,0.1), transparent 60%), var(--bg);
+  opacity:0; pointer-events:none; transition: opacity 420ms var(--ease);
+}
+.recap-overlay.open{ opacity:1; pointer-events:auto; }
+.recap-close{ position:fixed; top:22px; right:26px; z-index:81; }
+.recap-wrap{ max-width: 640px; margin: 0 auto; display:flex; flex-direction:column; gap:60px; padding: 90px 24px 100px; }
+.recap-section{ text-align:center; opacity:0; transform: translateY(24px); transition: all 700ms var(--ease); }
+.recap-section.show{ opacity:1; transform:none; }
+.recap-kicker{ font-family: var(--font-mono); font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color: var(--gold); margin-bottom:14px; }
+.recap-big{ font-family: var(--font-display); font-size: 52px; font-weight:600; line-height:1.05; }
+.recap-big .mono{ font-family: var(--font-mono); }
+.recap-sub{ margin-top:14px; color: var(--ink-muted); font-size:14.5px; line-height:1.7; max-width:460px; margin-left:auto; margin-right:auto; }
+.recap-badge{ display:inline-flex; align-items:center; gap:8px; margin-top:18px; padding:8px 18px; border-radius:30px; background: var(--gold-dim); color: var(--gold-bright); font-weight:600; font-size:13px; }
+
+/* ============================================================
+   CONFETTI
+   ============================================================ */
+.confetti-layer{ position:fixed; inset:0; pointer-events:none; z-index:65; overflow:hidden; }
+.confetti-piece{ position:absolute; top:-14px; border-radius:2px; animation: confettiFall linear forwards; }
+@keyframes confettiFall{
+  0%{ transform: translateY(0) rotate(0deg); opacity:1; }
+  100%{ transform: translateY(108vh) rotate(720deg); opacity:0.4; }
+}
+
+/* ============================================================
+   SOUND TOGGLE (topbar)
+   ============================================================ */
+.sound-toggle{ width:36px; height:36px; border-radius: var(--radius-md); display:flex; align-items:center; justify-content:center; border:1px solid var(--line-strong); background: rgba(15,23,42,0.03); cursor:pointer; color: var(--ink-muted); flex-shrink:0; }
+.sound-toggle:hover{ color: var(--ink); }
+.sound-toggle svg{ width:15px;height:15px; }
 </style>
 </head>
 <body>
@@ -488,13 +649,85 @@ const INCOME_CATEGORIES = ['Salary','Freelancing','Business','Investment','Schol
 const EXPENSE_CATEGORIES = ['Food','Transport','Fuel','College','Shopping','Entertainment','Medical','Rent','Utilities','Travel','Insurance','Bills','Other'];
 
 const CATEGORY_COLORS = {
-  Salary:'#C9A24B', Freelancing:'#5C8FB0', Business:'#B27FB0', Investment:'#5FBE8A',
-  Scholarship:'#6FA88A', Gift:'#D6B24A', Food:'#D9694C', Transport:'#5C8FB0',
-  Fuel:'#C6673F', College:'#8AA6C9', Shopping:'#B27FB0', Entertainment:'#D6B24A',
-  Medical:'#6FA88A', Rent:'#A98F4A', Utilities:'#7FB0A0', Travel:'#9E7FB0',
-  Insurance:'#4A8C97', Bills:'#C98A4B', Other:'#7C8B84'
+  Salary:'#00BAF2', Freelancing:'#0089D2', Business:'#7C4DFF', Investment:'#00B899',
+  Scholarship:'#26A69A', Gift:'#FF4081', Food:'#FF5262', Transport:'#0089D2',
+  Fuel:'#FB8C00', College:'#5C6BC0', Shopping:'#7C4DFF', Entertainment:'#FF4081',
+  Medical:'#26A69A', Rent:'#8D6E63', Utilities:'#66BB6A', Travel:'#29B6F6',
+  Insurance:'#00897B', Bills:'#FFB300', Other:'#78909C'
 };
-function catColor(name){ return CATEGORY_COLORS[name] || '#7C8B84'; }
+function catColor(name){ return CATEGORY_COLORS[name] || '#78909C'; }
+
+const ACCOUNT_PALETTE = ['#00BAF2','#00B899','#0089D2','#FF5262','#7C4DFF','#26A69A','#FF4081'];
+const TRANSFER_CATEGORY = 'Transfer';
+
+/* Keyword -> category guesses for the command palette's quick-add parser. */
+const CATEGORY_SYNONYMS = {
+  coffee:'Food', lunch:'Food', dinner:'Food', breakfast:'Food', groceries:'Food', grocery:'Food', restaurant:'Food', snack:'Food',
+  uber:'Transport', taxi:'Transport', cab:'Transport', bus:'Transport', metro:'Transport', train:'Transport', parking:'Transport',
+  fuel:'Fuel', gas:'Fuel', petrol:'Fuel', diesel:'Fuel',
+  netflix:'Entertainment', spotify:'Entertainment', movie:'Entertainment', cinema:'Entertainment', game:'Entertainment', concert:'Entertainment',
+  rent:'Rent', mortgage:'Rent',
+  electricity:'Utilities', wifi:'Utilities', internet:'Utilities', water:'Utilities', gas_bill:'Utilities', phone:'Bills', mobile:'Bills',
+  flight:'Travel', hotel:'Travel', airbnb:'Travel', vacation:'Travel', trip:'Travel',
+  doctor:'Medical', medicine:'Medical', pharmacy:'Medical', hospital:'Medical', dentist:'Medical',
+  insurance:'Insurance', premium:'Insurance',
+  tuition:'College', books:'College', course:'College',
+  shopping:'Shopping', clothes:'Shopping', amazon:'Shopping',
+  salary:'Salary', paycheck:'Salary', wages:'Salary',
+  freelance:'Freelancing', freelancing:'Freelancing', invoice:'Freelancing', gig:'Freelancing',
+  business:'Business', sales:'Business',
+  dividend:'Investment', interest:'Investment', stocks:'Investment', crypto:'Investment',
+  scholarship:'Scholarship', grant:'Scholarship',
+  gift:'Gift', present:'Gift',
+};
+
+/* ================================================================
+   STATE
+   ================================================================ */
+let state = {
+  transactions: [],
+  accounts: [],
+  recurring: [],
+  nextId: 1001,
+  nextAccountId: 1,
+  nextRecurringId: 1,
+  defaultAccountId: null,
+  monthlyBudget: 0,
+  currency: '$',
+  soundEnabled: true,
+  lastBackupAt: null,
+};
+let view = 'dashboard';
+let ledgerFilters = { keyword:'', type:'all', category:'all', from:'', to:'', min:'', max:'' };
+let editingTxId = null;
+let editingRecurringId = null;
+let charts = {};
+let dataReady = false;
+let audioUnlocked = false;
+
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/*
+ * Backfills fields for state loaded from an older version of this
+ * app (single-account, no recurring rules) so nothing breaks for
+ * returning users.
+ */
+function migrateState(){
+  if(!Array.isArray(state.accounts) || state.accounts.length===0){
+    const primary = { id: state.nextAccountId++, name:'Primary', color: ACCOUNT_PALETTE[0], startingBalance: 0 };
+    state.accounts = [primary];
+    state.defaultAccountId = primary.id;
+  }
+  if(!state.defaultAccountId || !state.accounts.find(a=>a.id===state.defaultAccountId)){
+    state.defaultAccountId = state.accounts[0].id;
+  }
+  if(!Array.isArray(state.recurring)) state.recurring = [];
+  if(typeof state.nextRecurringId !== 'number') state.nextRecurringId = 1;
+  if(typeof state.soundEnabled !== 'boolean') state.soundEnabled = true;
+  state.transactions.forEach(t=>{
+    if(!t.accountId) t.accountId = state.defaultAccountId;
+  });
+}
 
 const ICONS = {
   dashboard:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>',
@@ -516,11 +749,20 @@ const ICONS = {
   empty:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 4v16" stroke-dasharray="2 3"/></svg>',
   down:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v13M6 12l6 6 6-6"/></svg>',
   print:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9V3h12v6M6 18h12v4H6zM4 9h16v7H4z"/></svg>',
+  wallet:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M16 12h3M16 12a1.5 1.5 0 010 3"/><path d="M3 9h18"/></svg>',
+  repeat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>',
+  command:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3a3 3 0 013 3v12a3 3 0 11-3-3h12a3 3 0 11-3 3V6a3 3 0 113-3H6z"/></svg>',
+  soundOn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14"/></svg>',
+  soundOff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M23 9l-6 6M17 9l6 6"/></svg>',
+  sparkle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l1.8 5.4L19 9l-5.2 1.6L12 16l-1.8-5.4L5 9l5.2-1.6z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>',
+  swap:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3l4 4-4 4M3 7h8M17 21l-4-4 4-4M21 17h-8"/></svg>',
 };
 
 const NAV = [
   {id:'dashboard', label:'Dashboard', icon:'dashboard', key:'D'},
   {id:'ledger',    label:'Ledger',    icon:'ledger',    key:'L'},
+  {id:'accounts',  label:'Accounts',  icon:'wallet',    key:'C'},
+  {id:'recurring', label:'Recurring', icon:'repeat',    key:'U'},
   {id:'analytics', label:'Analytics', icon:'analytics', key:'A'},
   {id:'budget',    label:'Budget',    icon:'budget',    key:'B'},
   {id:'goals',     label:'Goals',     icon:'goals',     key:'G'},
@@ -529,22 +771,9 @@ const NAV = [
 ];
 
 /* ================================================================
-   STATE
+   STATE (see expanded declaration above; this section now only
+   handles persistence)
    ================================================================ */
-let state = {
-  transactions: [],
-  nextId: 1001,
-  monthlyBudget: 0,
-  currency: '$',
-  lastBackupAt: null,
-};
-let view = 'dashboard';
-let ledgerFilters = { keyword:'', type:'all', category:'all', from:'', to:'', min:'', max:'' };
-let editingTxId = null;
-let charts = {};
-let dataReady = false;
-
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ================================================================
    PERSISTENCE
@@ -559,7 +788,13 @@ async function loadState(){
   }catch(err){
     console.warn('No saved ledger yet, starting fresh.', err);
   }
+  migrateState();
+  const generated = processDueRecurring();
   dataReady = true;
+  if(generated > 0){
+    await saveState();
+    toast(`${generated} recurring ${generated===1?'entry':'entries'} auto-logged.`, 'success');
+  }
 }
 
 async function saveState(){
@@ -626,15 +861,102 @@ function toast(msg, kind){
   setTimeout(()=>{ el.style.transition='opacity 300ms ease'; el.style.opacity='0'; setTimeout(()=>el.remove(), 320); }, 2600);
 }
 
-function playStamp(kind, label){
-  if(reduceMotion){ toast(label + ' recorded.', 'success'); return; }
+function playStamp(kind, label, amount){
+  playSound('stamp');
+  if(reduceMotion){ toast(label + (amount!=null ? ' · ' + fmtMoney(amount) : '') + '.', 'success'); return; }
   const layer = document.getElementById('stamp-layer');
   const el = document.createElement('div');
   el.className = 'stamp ' + (kind==='Income' ? 'income' : '');
-  el.textContent = label;
+  el.innerHTML = `
+    <div class="stamp-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <path class="stamp-check-path" d="M4 12.5l5 5L20 6"/>
+      </svg>
+    </div>
+    <div class="stamp-label">${escapeHtml(label)}</div>
+    ${amount!=null ? `<div class="stamp-sub">${fmtMoney(amount)}</div>` : ''}
+  `;
   layer.appendChild(el);
   requestAnimationFrame(()=> el.classList.add('play'));
-  setTimeout(()=> el.remove(), 800);
+  setTimeout(()=> el.remove(), 1450);
+}
+
+/* ================================================================
+   SOUND LAYER
+   Small, optional audio cues built on Tone.js. Every call is wrapped
+   defensively: if the library failed to load (offline, blocked CDN)
+   or the browser hasn't granted an audio context yet, these are
+   silent no-ops rather than errors.
+   ================================================================ */
+let stampSynth = null, chimeSynth = null;
+
+function unlockAudio(){
+  if(audioUnlocked || typeof Tone === 'undefined') return;
+  try{
+    Tone.start();
+    stampSynth = new Tone.MembraneSynth({ pitchDecay:0.02, octaves:3, envelope:{attack:0.001, decay:0.25, sustain:0} }).toDestination();
+    stampSynth.volume.value = -10;
+    chimeSynth = new Tone.PolySynth(Tone.Synth, { envelope:{attack:0.005, decay:0.3, sustain:0.15, release:0.6} }).toDestination();
+    chimeSynth.volume.value = -12;
+    audioUnlocked = true;
+  }catch(err){ console.warn('Audio init skipped', err); }
+}
+document.addEventListener('pointerdown', unlockAudio, { once:true });
+document.addEventListener('keydown', unlockAudio, { once:true });
+
+function playSound(kind){
+  if(!state.soundEnabled || !audioUnlocked || typeof Tone === 'undefined') return;
+  try{
+    if(kind==='stamp' && stampSynth){ stampSynth.triggerAttackRelease('C2', '8n'); }
+    if(kind==='chime' && chimeSynth){
+      const now = Tone.now();
+      chimeSynth.triggerAttackRelease('C5', '16n', now);
+      chimeSynth.triggerAttackRelease('E5', '16n', now+0.08);
+      chimeSynth.triggerAttackRelease('G5', '16n', now+0.16);
+      chimeSynth.triggerAttackRelease('C6', '8n', now+0.26);
+    }
+  }catch(err){ /* audio is a nicety, never let it break the app */ }
+}
+
+/* ================================================================
+   CONFETTI
+   ================================================================ */
+function fireConfetti(){
+  if(reduceMotion) return;
+  const colors = ['#00BAF2','#00B899','#FF5262','#7C4DFF','#FFA000','#0089D2'];
+  let layer = document.getElementById('confetti-layer');
+  if(!layer){ layer = document.createElement('div'); layer.id='confetti-layer'; layer.className='confetti-layer'; document.body.appendChild(layer); }
+  const count = 70;
+  for(let i=0;i<count;i++){
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const size = 5 + Math.random()*6;
+    piece.style.width = size+'px';
+    piece.style.height = (size*0.4 + Math.random()*size*0.6)+'px';
+    piece.style.left = Math.random()*100+'vw';
+    piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+    piece.style.animationDuration = (1.8 + Math.random()*1.4)+'s';
+    piece.style.animationDelay = (Math.random()*0.4)+'s';
+    layer.appendChild(piece);
+    setTimeout(()=> piece.remove(), 3600);
+  }
+  playSound('chime');
+}
+
+/* ================================================================
+   HOVER TILT
+   ================================================================ */
+function enableTilt(container){
+  if(reduceMotion) return;
+  container.querySelectorAll('.tilt').forEach(card=>{
+    card.addEventListener('mousemove', e=>{
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left)/r.width - 0.5;
+      const py = (e.clientY - r.top)/r.height - 0.5;
+      card.style.transform = `perspective(600px) rotateX(${(-py*5).toFixed(2)}deg) rotateY(${(px*7).toFixed(2)}deg) translateY(-2px)`;
+    });
+    card.addEventListener('mouseleave', ()=>{ card.style.transform = ''; });
+  });
 }
 
 function animateNumber(el, to, opts={}){
@@ -657,8 +979,9 @@ function animateNumber(el, to, opts={}){
 /* ================================================================
    DATA HELPERS
    ================================================================ */
-function totalIncome(list){ return list.filter(t=>t.type==='Income').reduce((s,t)=>s+t.amount,0); }
-function totalExpense(list){ return list.filter(t=>t.type==='Expense').reduce((s,t)=>s+t.amount,0); }
+function isTransfer(t){ return t.category === TRANSFER_CATEGORY; }
+function totalIncome(list){ return list.filter(t=>t.type==='Income' && !isTransfer(t)).reduce((s,t)=>s+t.amount,0); }
+function totalExpense(list){ return list.filter(t=>t.type==='Expense' && !isTransfer(t)).reduce((s,t)=>s+t.amount,0); }
 
 function sortedTx(){
   return [...state.transactions].sort((a,b)=>{
@@ -669,10 +992,84 @@ function sortedTx(){
 
 function categoryTotals(type){
   const map = {};
-  state.transactions.filter(t=>t.type===type).forEach(t=>{
+  state.transactions.filter(t=>t.type===type && !isTransfer(t)).forEach(t=>{
     map[t.category] = (map[t.category]||0) + t.amount;
   });
   return Object.entries(map).sort((a,b)=>b[1]-a[1]);
+}
+
+/* ================================================================
+   ACCOUNTS
+   ================================================================ */
+function accountBalance(accountId){
+  const acc = state.accounts.find(a=>a.id===accountId);
+  if(!acc) return 0;
+  let bal = acc.startingBalance || 0;
+  state.transactions.forEach(t=>{
+    if(t.accountId !== accountId) return;
+    bal += t.type==='Income' ? t.amount : -t.amount;
+  });
+  return bal;
+}
+function netWorth(){
+  return state.accounts.reduce((sum,a)=> sum + accountBalance(a.id), 0);
+}
+function accountName(id){
+  const a = state.accounts.find(x=>x.id===id);
+  return a ? a.name : 'Unknown';
+}
+
+/* ================================================================
+   RECURRING TRANSACTIONS
+   ================================================================ */
+function addInterval(iso, frequency){
+  const d = new Date(iso+'T00:00:00');
+  if(frequency==='weekly'){
+    d.setDate(d.getDate()+7);
+  } else {
+    const day = d.getDate();
+    d.setDate(1);
+    d.setMonth(d.getMonth()+1);
+    const daysInNewMonth = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
+    d.setDate(Math.min(day, daysInNewMonth));
+  }
+  return d.toISOString().slice(0,10);
+}
+
+/*
+ * Materializes any recurring rule whose next run date has arrived
+ * (or passed, e.g. if the app wasn't opened for a while), capped at
+ * 36 generated occurrences per rule so a long-dormant rule can't
+ * flood the ledger.
+ */
+function processDueRecurring(){
+  const today = todayISO();
+  let generated = 0;
+  state.recurring.forEach(rule=>{
+    if(!rule.active) return;
+    let guard = 0;
+    while(rule.nextRun <= today && guard < 36){
+      state.transactions.push({
+        id: uid(), date: rule.nextRun, time: '09:00', type: rule.type,
+        category: rule.category, amount: rule.amount, description: rule.description,
+        accountId: rule.accountId, recurringId: rule.id
+      });
+      rule.nextRun = addInterval(rule.nextRun, rule.frequency);
+      generated++; guard++;
+    }
+  });
+  return generated;
+}
+function monthlyNormalizedAmount(rule){
+  return rule.frequency==='weekly' ? rule.amount * 4.348 : rule.amount;
+}
+function forecastNextMonth(){
+  let income = 0, expense = 0;
+  state.recurring.filter(r=>r.active).forEach(r=>{
+    if(r.type==='Income') income += monthlyNormalizedAmount(r);
+    else expense += monthlyNormalizedAmount(r);
+  });
+  return { income, expense };
 }
 
 function lastNMonths(n){
@@ -740,19 +1137,29 @@ function renderShell(){
 
   const topbar = document.getElementById('topbar');
   const titles = {
-    dashboard:['OVERVIEW','Dashboard'], ledger:['ALL RECORDS','Ledger'], analytics:['BREAKDOWN','Analytics'],
+    dashboard:['OVERVIEW','Dashboard'], ledger:['ALL RECORDS','Ledger'], accounts:['NET WORTH','Accounts'],
+    recurring:['AUTOMATED','Recurring'], analytics:['BREAKDOWN','Analytics'],
     budget:['MONTHLY LIMIT','Budget'], goals:['PLAN AHEAD','Savings Goal'], reports:['STATEMENT','Reports'], settings:['DATA & PREFS','Settings']
   };
   const [eyebrow, title] = titles[view];
   topbar.innerHTML = `
     <div class="topbar-title"><div class="eyebrow">${eyebrow}</div><h2>${title}</h2></div>
     <div class="topbar-actions">
+      <button class="sound-toggle" id="btn-sound" title="Toggle sound effects">${state.soundEnabled ? ICONS.soundOn : ICONS.soundOff}</button>
+      <button class="btn btn-ghost" id="btn-cmdk">${ICONS.command} <span class="cmdk-hint" style="margin-left:2px">${navigator.platform && navigator.platform.includes('Mac') ? '⌘K' : 'Ctrl K'}</span></button>
       <button class="btn btn-income" id="btn-add-income">${ICONS.plus} Add Income</button>
       <button class="btn btn-expense" id="btn-add-expense">${ICONS.plus} Add Expense</button>
     </div>
   `;
   document.getElementById('btn-add-income').addEventListener('click', ()=>openTxDrawer('Income'));
   document.getElementById('btn-add-expense').addEventListener('click', ()=>openTxDrawer('Expense'));
+  document.getElementById('btn-cmdk').addEventListener('click', openCmdk);
+  document.getElementById('btn-sound').addEventListener('click', async ()=>{
+    state.soundEnabled = !state.soundEnabled;
+    unlockAudio();
+    await saveState();
+    renderShell();
+  });
 }
 
 function updateClock(){
@@ -772,8 +1179,14 @@ function renderView(){
   if(!dataReady){ root.innerHTML = skeletonHtml(); return; }
   Object.values(charts).forEach(c=>{ try{ c.destroy(); }catch(e){} });
   charts = {};
-  const renderers = { dashboard:renderDashboard, ledger:renderLedger, analytics:renderAnalytics, budget:renderBudget, goals:renderGoals, reports:renderReports, settings:renderSettings };
+  const renderers = {
+    dashboard:renderDashboard, ledger:renderLedger, accounts:renderAccounts, recurring:renderRecurring,
+    analytics:renderAnalytics, budget:renderBudget, goals:renderGoals, reports:renderReports, settings:renderSettings
+  };
   root.innerHTML = renderers[view]();
+  root.classList.remove('view-anim');
+  void root.offsetWidth; /* restart the animation on every render */
+  root.classList.add('view-anim');
   afterRender[view] && afterRender[view]();
 }
 const afterRender = {};
@@ -821,7 +1234,7 @@ function renderDashboard(){
       </div>
       <p class="hero-sub">Income <b class="mono">${fmtMoney(income)}</b> minus expense <b class="mono">${fmtMoney(expense)}</b> across <b>${tx.length}</b> recorded ${tx.length===1?'entry':'entries'}.</p>
       <svg class="hero-sparkline" viewBox="0 0 300 92" preserveAspectRatio="none">
-        <polyline fill="none" stroke="${net>=0?'#5FBE8A':'#D9694C'}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"
+        <polyline fill="none" stroke="${net>=0?'#00B899':'#FF5262'}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"
           points="${sparkPoints(series)}" opacity="0.85"/>
       </svg>
     </div>
@@ -884,7 +1297,7 @@ function statCard(label, value, kind, icon, delta, suffix){
   }
   const displayVal = suffix==='%' ? value.toFixed(1)+'%' : fmtMoney(value);
   return `
-    <div class="panel stat-card">
+    <div class="panel stat-card tilt">
       <div class="stat-top">
         <span class="eyebrow">${label}</span>
         <div class="stat-icon" style="background:${bgVar}; color:${colorVar}">${icon}</div>
@@ -897,7 +1310,7 @@ function statCard(label, value, kind, icon, delta, suffix){
 function budgetMiniCard(){
   if(!state.monthlyBudget || state.monthlyBudget<=0){
     return `
-      <div class="panel stat-card">
+      <div class="panel stat-card tilt">
         <div class="stat-top"><span class="eyebrow">Budget</span><div class="stat-icon" style="background:var(--gold-dim); color:var(--gold-bright)">${ICONS.budget}</div></div>
         <div class="stat-val" style="font-size:13px; color:var(--ink-faint); font-family:var(--font-body); font-weight:500;">Not set yet</div>
         <button class="btn btn-ghost btn-sm" data-goto="budget" style="align-self:flex-start; padding-left:0;">Set a budget →</button>
@@ -907,7 +1320,7 @@ function budgetMiniCard(){
   const frac = expense/state.monthlyBudget;
   const color = frac>=1 ? 'var(--expense)' : frac>=0.8 ? 'var(--warn)' : 'var(--income)';
   return `
-    <div class="panel stat-card">
+    <div class="panel stat-card tilt">
       <div class="stat-top"><span class="eyebrow">Budget this month</span><div class="stat-icon" style="background:var(--gold-dim); color:var(--gold-bright)">${ICONS.budget}</div></div>
       <div class="stat-val mono" style="color:${color}">${Math.round(frac*100)}%</div>
       <div class="tally-track"><div class="tally-fill" style="width:${Math.min(frac*100,100)}%; background:${color}"></div></div>
@@ -940,6 +1353,7 @@ afterRender.dashboard = function(){
 
   document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click', e=>{ view=e.currentTarget.dataset.goto; renderShell(); renderView(); }));
   wireRowActions();
+  enableTilt(document.getElementById('view-root'));
 
   const months = lastNMonths(6);
   const series = monthlySeries(months);
@@ -948,8 +1362,8 @@ afterRender.dashboard = function(){
     charts.trend = new Chart(trendCtx, {
       type:'bar',
       data:{ labels: series.map(s=>s.label), datasets:[
-        {label:'Income', data:series.map(s=>s.income), backgroundColor:'#5FBE8A', borderRadius:4, maxBarThickness:22},
-        {label:'Expense', data:series.map(s=>s.expense), backgroundColor:'#D9694C', borderRadius:4, maxBarThickness:22},
+        {label:'Income', data:series.map(s=>s.income), backgroundColor:'#00B899', borderRadius:4, maxBarThickness:22},
+        {label:'Expense', data:series.map(s=>s.expense), backgroundColor:'#FF5262', borderRadius:4, maxBarThickness:22},
       ]},
       options: chartBaseOptions({ stacked:false })
     });
@@ -964,7 +1378,7 @@ afterRender.dashboard = function(){
         type:'doughnut',
         data:{ labels: catTotals.map(c=>c[0]), datasets:[{ data: catTotals.map(c=>c[1]), backgroundColor: catTotals.map(c=>catColor(c[0])), borderColor:'#14281F', borderWidth:2 }] },
         options:{ responsive:true, maintainAspectRatio:true, cutout:'68%',
-          plugins:{ legend:{ position:'right', labels:{ color:'#9FB3A8', boxWidth:9, boxHeight:9, usePointStyle:true, font:{family:'IBM Plex Sans', size:11} } },
+          plugins:{ legend:{ position:'right', labels:{ color:'#64748B', boxWidth:9, boxHeight:9, usePointStyle:true, font:{family:'Inter', size:11} } },
           tooltip: tooltipStyle() } }
       });
     }
@@ -975,14 +1389,14 @@ function chartBaseOptions(opts={}){
   return {
     responsive:true, maintainAspectRatio:true,
     scales:{
-      x:{ stacked: !!opts.stacked, grid:{display:false}, ticks:{ color:'#9FB3A8', font:{family:'IBM Plex Mono', size:11} } },
-      y:{ stacked: !!opts.stacked, grid:{color:'rgba(237,234,224,0.06)'}, ticks:{ color:'#9FB3A8', font:{family:'IBM Plex Mono', size:10} } }
+      x:{ stacked: !!opts.stacked, grid:{display:false}, ticks:{ color:'#64748B', font:{family:'IBM Plex Mono', size:11} } },
+      y:{ stacked: !!opts.stacked, grid:{color:'rgba(15,23,42,0.06)'}, ticks:{ color:'#64748B', font:{family:'IBM Plex Mono', size:10} } }
     },
-    plugins:{ legend:{ labels:{ color:'#9FB3A8', usePointStyle:true, boxWidth:8, boxHeight:8, font:{family:'IBM Plex Sans', size:11.5} } }, tooltip: tooltipStyle() }
+    plugins:{ legend:{ labels:{ color:'#64748B', usePointStyle:true, boxWidth:8, boxHeight:8, font:{family:'Inter', size:11.5} } }, tooltip: tooltipStyle() }
   };
 }
 function tooltipStyle(){
-  return { backgroundColor:'#0A1611', borderColor:'rgba(237,234,224,0.18)', borderWidth:1, titleColor:'#E4C067', bodyColor:'#EDEAE0', padding:10, titleFont:{family:'IBM Plex Sans', weight:'600'}, bodyFont:{family:'IBM Plex Mono'} };
+  return { backgroundColor:'#0F172A', borderColor:'rgba(255,255,255,0.1)', borderWidth:1, titleColor:'#33C9F5', bodyColor:'#F1F5F9', padding:10, cornerRadius:8, titleFont:{family:'Inter', weight:'600'}, bodyFont:{family:'IBM Plex Mono'} };
 }
 
 function wireRowActions(){
@@ -1116,6 +1530,14 @@ function openTxDrawer(presetType, editId){
 
       <div class="field"><label>Date</label><input type="date" id="tx-date" value="${existing ? existing.date : todayISO()}"></div>
 
+      ${state.accounts.length>1 ? `
+      <div class="field">
+        <label>Account</label>
+        <select id="tx-account">
+          ${state.accounts.map(a=>`<option value="${a.id}" ${(existing?existing.accountId:state.defaultAccountId)===a.id?'selected':''}>${escapeHtml(a.name)}</option>`).join('')}
+        </select>
+      </div>` : `<input type="hidden" id="tx-account" value="${state.defaultAccountId}">`}
+
       <div class="field">
         <label>Category</label>
         <select id="tx-category">
@@ -1180,6 +1602,7 @@ async function saveTxFromDrawer(type, existing){
   const catEl = document.getElementById('tx-category');
   const amtEl = document.getElementById('tx-amount');
   const descEl = document.getElementById('tx-desc');
+  const acctEl = document.getElementById('tx-account');
   const amtHint = document.getElementById('tx-amount-hint');
   const descHint = document.getElementById('tx-desc-hint');
 
@@ -1202,19 +1625,23 @@ async function saveTxFromDrawer(type, existing){
   if(!dateEl.value){ valid = false; dateEl.closest('.field').classList.add('invalid'); }
   if(!valid) return;
 
+  const accountId = Number(acctEl.value) || state.defaultAccountId;
+
   if(existing){
     existing.date = dateEl.value;
     existing.category = catEl.value;
     existing.amount = Math.round(amount*100)/100;
     existing.description = descEl.value.trim();
+    existing.accountId = accountId;
     toast('Entry updated.', 'success');
   } else {
     const tx = {
       id: uid(), date: dateEl.value, time: nowHM(), type: type,
-      category: catEl.value, amount: Math.round(amount*100)/100, description: descEl.value.trim()
+      category: catEl.value, amount: Math.round(amount*100)/100, description: descEl.value.trim(),
+      accountId: accountId
     };
     state.transactions.push(tx);
-    playStamp(type, type==='Income' ? 'Received' : 'Recorded');
+    playStamp(type, type==='Income' ? 'Received' : 'Recorded', tx.amount);
   }
   await saveState();
   closeTxDrawer();
@@ -1323,6 +1750,24 @@ function renderAnalytics(){
         </div>
       </div>
     </div>
+
+    <div class="panel" style="margin-top:16px">
+      <div class="panel-head"><div><div class="eyebrow">Last ~18 weeks</div><h3>Spending Heatmap</h3></div></div>
+      <div class="panel-pad" id="heatmap-host"></div>
+    </div>
+
+    <div class="grid grid-12" style="margin-top:16px">
+      <div class="panel span-8">
+        <div class="panel-head"><div><div class="eyebrow">Where money moves</div><h3>Income → Expense Flow</h3></div></div>
+        <div class="panel-pad" id="sankey-host" style="overflow-x:auto;"></div>
+      </div>
+      <div class="panel span-4 panel-pad" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; text-align:center;">
+        ${ICONS.sparkle}
+        <h3 style="font-size:15px;">Your Year in Money</h3>
+        <p style="color:var(--ink-muted); font-size:12.5px;">A scrollable recap of your biggest numbers this year.</p>
+        <button class="btn btn-primary btn-sm" id="btn-open-recap">${ICONS.sparkle} View Recap</button>
+      </div>
+    </div>
   `;
 }
 function statLine(label, val, money){
@@ -1338,10 +1783,128 @@ afterRender.analytics = function(){
     charts.analyticsDonut = new Chart(ctx, {
       type:'doughnut',
       data:{ labels: expTotals.map(c=>c[0]), datasets:[{ data: expTotals.map(c=>c[1]), backgroundColor: expTotals.map(c=>catColor(c[0])), borderColor:'#14281F', borderWidth:2 }] },
-      options:{ responsive:true, cutout:'62%', plugins:{ legend:{ position:'bottom', labels:{ color:'#9FB3A8', boxWidth:9, boxHeight:9, usePointStyle:true, font:{family:'IBM Plex Sans', size:10.5} } }, tooltip: tooltipStyle() } }
+      options:{ responsive:true, cutout:'62%', plugins:{ legend:{ position:'bottom', labels:{ color:'#64748B', boxWidth:9, boxHeight:9, usePointStyle:true, font:{family:'Inter', size:10.5} } }, tooltip: tooltipStyle() } }
     });
   }
+  renderHeatmap();
+  renderSankey();
+  const recapBtn = document.getElementById('btn-open-recap');
+  if(recapBtn) recapBtn.addEventListener('click', openRecap);
 };
+
+/* ================================================================
+   SPENDING HEATMAP (GitHub-contributions style)
+   ================================================================ */
+function renderHeatmap(){
+  const host = document.getElementById('heatmap-host');
+  if(!host) return;
+
+  const weeks = 18;
+  const totalDays = weeks*7;
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const start = new Date(today);
+  start.setDate(start.getDate() - (totalDays-1) - today.getDay());
+
+  const dayTotals = {};
+  state.transactions.forEach(t=>{
+    if(t.type!=='Expense' || isTransfer(t)) return;
+    dayTotals[t.date] = (dayTotals[t.date]||0) + t.amount;
+  });
+  const maxVal = Math.max(1, ...Object.values(dayTotals));
+
+  if(Object.keys(dayTotals).length===0){
+    host.innerHTML = `<div class="empty" style="padding:24px 10px">${ICONS.empty}<p>No expenses yet — your heatmap fills in as you log them.</p></div>`;
+    return;
+  }
+
+  const cells = [];
+  for(let i=0;i<totalDays;i++){
+    const d = new Date(start);
+    d.setDate(d.getDate()+i);
+    const iso = d.toISOString().slice(0,10);
+    const val = dayTotals[iso] || 0;
+    const intensity = val>0 ? Math.max(0.16, Math.min(1, val/maxVal)) : 0;
+    const isFuture = d > today;
+    const color = isFuture ? 'transparent' : (val>0 ? `color-mix(in srgb, var(--expense) ${Math.round(intensity*100)}%, var(--bg-inset))` : 'var(--bg-inset)');
+    cells.push(`<div class="heatmap-cell" style="background:${color}" title="${fmtDateDisplay(iso)} · ${fmtMoney(val)}"></div>`);
+  }
+  host.innerHTML = `
+    <div class="heatmap-grid">${cells.join('')}</div>
+    <div class="heatmap-legend">
+      <span>Less</span>
+      <div class="heatmap-cell" style="background:var(--bg-inset)"></div>
+      <div class="heatmap-cell" style="background:color-mix(in srgb, var(--expense) 30%, var(--bg-inset))"></div>
+      <div class="heatmap-cell" style="background:color-mix(in srgb, var(--expense) 60%, var(--bg-inset))"></div>
+      <div class="heatmap-cell" style="background:var(--expense)"></div>
+      <span>More</span>
+    </div>
+  `;
+}
+
+/* ================================================================
+   SANKEY-STYLE MONEY FLOW DIAGRAM
+   Hand-rolled 3-column flow (income sources -> center -> expense
+   categories), proportional node heights, bezier ribbons.
+   ================================================================ */
+function renderSankey(){
+  const host = document.getElementById('sankey-host');
+  if(!host) return;
+
+  const incomeSrc = categoryTotals('Income').slice(0,6);
+  const expenseSrc = categoryTotals('Expense').slice(0,6);
+  if(incomeSrc.length===0 && expenseSrc.length===0){
+    host.innerHTML = `<div class="empty" style="padding:24px 10px">${ICONS.empty}<p>Add income and expenses to see how money flows.</p></div>`;
+    return;
+  }
+
+  const W = 720, H = 300, colX = [70, 360, 650], nodeW = 14;
+  const incomeTotal = incomeSrc.reduce((s,c)=>s+c[1],0) || 1;
+  const expenseTotal = expenseSrc.reduce((s,c)=>s+c[1],0) || 1;
+  const midTotal = Math.max(incomeTotal, expenseTotal, 1);
+  const topPad = 20, usableH = H - topPad*2;
+
+  function layout(nodes, total){
+    let y = topPad;
+    return nodes.map(([name,val])=>{
+      const h = Math.max(6, (val/total) * usableH);
+      const node = { name, val, y, h };
+      y += h + 8;
+      return node;
+    });
+  }
+  const leftNodes = layout(incomeSrc, midTotal);
+  const rightNodes = layout(expenseSrc, midTotal);
+  const centerH = Math.min(usableH, Math.max(...leftNodes.map(n=>n.y+n.h), 0) - topPad, Math.max(...rightNodes.map(n=>n.y+n.h), 0) - topPad) || usableH*0.6;
+  const centerNode = { y: topPad, h: Math.max(...leftNodes.map(n=>n.y+n.h-topPad), ...rightNodes.map(n=>n.y+n.h-topPad), 20) };
+
+  function ribbon(x1,y1,h1,x2,y2,h2,color){
+    const mx = (x1+x2)/2;
+    return `<path d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2} L${x2},${y2+h2} C${mx},${y2+h2} ${mx},${y1+h1} ${x1},${y1+h1} Z" fill="${color}" opacity="0.4"/>`;
+  }
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:560px">`;
+  // center trunk
+  svg += `<rect x="${colX[1]-nodeW/2}" y="${centerNode.y}" width="${nodeW}" height="${centerNode.h}" rx="3" fill="var(--gold)"/>`;
+  svg += `<text x="${colX[1]}" y="${centerNode.y - 8}" text-anchor="middle" class="sankey-node-label strong">Balance</text>`;
+
+  leftNodes.forEach(n=>{
+    const color = catColor(n.name);
+    svg += ribbon(colX[0]+nodeW/2, n.y, n.h, colX[1]-nodeW/2, n.y, n.h, color);
+    svg += `<rect x="${colX[0]-nodeW/2}" y="${n.y}" width="${nodeW}" height="${n.h}" rx="3" fill="${color}"/>`;
+    svg += `<text x="${colX[0]-nodeW/2-8}" y="${n.y+n.h/2+3}" text-anchor="end" class="sankey-node-label">${escapeHtml(n.name)}</text>`;
+  });
+  rightNodes.forEach(n=>{
+    const color = catColor(n.name);
+    svg += ribbon(colX[1]+nodeW/2, n.y, n.h, colX[2]-nodeW/2, n.y, n.h, color);
+    svg += `<rect x="${colX[2]-nodeW/2}" y="${n.y}" width="${nodeW}" height="${n.h}" rx="3" fill="${color}"/>`;
+    svg += `<text x="${colX[2]+nodeW/2+8}" y="${n.y+n.h/2+3}" text-anchor="start" class="sankey-node-label">${escapeHtml(n.name)}</text>`;
+  });
+  svg += `<text x="${colX[0]}" y="${H-4}" text-anchor="middle" class="sankey-node-label" style="opacity:0.6">Income sources</text>`;
+  svg += `<text x="${colX[2]}" y="${H-4}" text-anchor="middle" class="sankey-node-label" style="opacity:0.6">Where it goes</text>`;
+  svg += `</svg>`;
+  host.innerHTML = svg;
+}
 
 /* ================================================================
    VIEW: BUDGET
@@ -1353,7 +1916,7 @@ function renderBudget(){
   const budget = state.monthlyBudget || 0;
   const frac = budget>0 ? spent/budget : 0;
   const remaining = budget - spent;
-  const color = frac>=1 ? '#D9694C' : frac>=0.9 ? '#D9694C' : frac>=0.8 ? '#E0B84B' : '#5FBE8A';
+  const color = frac>=1 ? '#FF5262' : frac>=0.9 ? '#FF5262' : frac>=0.8 ? '#FFA000' : '#00B899';
   const statusText = frac>=1 ? 'Budget exceeded' : frac>=0.9 ? 'Critical — nearly out of budget' : frac>=0.8 ? 'Warning — approaching your limit' : 'Within budget';
 
   const months = lastNMonths(6);
@@ -1368,7 +1931,7 @@ function renderBudget(){
         <div class="panel-head"><div><div class="eyebrow">${monthLabel(todayISO())}</div><h3>Budget Gauge</h3></div></div>
         <div class="panel-pad gauge-wrap">
           <svg width="240" height="140" viewBox="0 0 240 140">
-            <path d="M20 130 A100 100 0 0 1 220 130" fill="none" stroke="rgba(237,234,224,0.08)" stroke-width="16" stroke-linecap="round"/>
+            <path d="M20 130 A100 100 0 0 1 220 130" fill="none" stroke="rgba(15,23,42,0.08)" stroke-width="16" stroke-linecap="round"/>
             <path id="gauge-arc" d="M20 130 A100 100 0 0 1 220 130" fill="none" stroke="${color}" stroke-width="16" stroke-linecap="round"
               stroke-dasharray="314" stroke-dashoffset="314"/>
           </svg>
@@ -1395,7 +1958,7 @@ function renderBudget(){
         <div class="panel-pad">
           ${budget<=0 ? `<div class="empty" style="padding:40px 10px">${ICONS.budget}<h4>Set a budget to unlock this view</h4><p>Once you set a monthly budget, we'll track how each month compares.</p></div>` :
           hist.map(h=>{
-            const c = h.val>=100?'#D9694C':h.val>=80?'#E0B84B':'#5FBE8A';
+            const c = h.val>=100?'#FF5262':h.val>=80?'#FFA000':'#00B899';
             return `<div class="tally-row"><span class="cat-name">${h.label}</span><div class="tally-track"><div class="tally-fill" data-target="${Math.min(h.val,100)}" style="background:${c}"></div></div><span class="tally-val">${fmtMoney(h.spent)}</span></div>`;
           }).join('')}
         </div>
@@ -1463,14 +2026,25 @@ afterRender.goals = function(){
       toast('Enter a valid target and monthly savings amount.', 'error');
       return;
     }
-    const months = Math.ceil(target/monthly);
+    const currentSavings = totalIncome(state.transactions) - totalExpense(state.transactions);
+    if(currentSavings >= target){
+      resultEl.innerHTML = `
+        <div class="panel-pad" style="text-align:center; padding:50px 20px;">
+          ${ICONS.sparkle}
+          <h3 style="margin-top:14px; font-size:20px;">You've already reached this goal!</h3>
+          <p style="color:var(--ink-muted); margin-top:8px;">Your current net savings of ${fmtMoney(currentSavings)} already clears the ${fmtMoney(target)} target.</p>
+        </div>`;
+      fireConfetti();
+      return;
+    }
+
+    const months = Math.ceil((target-currentSavings)/monthly);
     const years = Math.floor(months/12), remMonths = months%12;
     let tone, toneColor, message;
     if(months<=6){ tone='Achievable'; toneColor='var(--income)'; message="That's a very achievable short-term goal!"; }
     else if(months<=24){ tone='Steady'; toneColor='var(--warn)'; message='A solid mid-term goal — stay consistent.'; }
     else { tone='Long-term'; toneColor='var(--expense)'; message='This is a long-term goal — consider increasing your monthly savings.'; }
 
-    const pct = Math.min(100, (monthly*months>0 ? 100 : 0));
     resultEl.innerHTML = `
       <div class="panel-head"><div><div class="eyebrow">Projection</div><h3>Timeline to ${fmtMoney(target)}</h3></div><span class="pill" style="background:${toneColor}22; color:${toneColor}">${tone}</span></div>
       <div class="panel-pad">
@@ -1483,8 +2057,414 @@ afterRender.goals = function(){
     const monthsEl = document.getElementById('goal-months');
     animateNumber(monthsEl, months, {decimals:0, prefix:''});
     requestAnimationFrame(()=>{ resultEl.querySelector('.tally-fill').style.width='100%'; });
+    if(tone==='Achievable') fireConfetti();
   });
 };
+
+/* ================================================================
+   VIEW: ACCOUNTS
+   ================================================================ */
+function renderAccounts(){
+  const worth = netWorth();
+  return `
+    <div class="panel hero" style="margin-top:14px">
+      <div class="hero-eyebrow"><span class="eyebrow">Across ${state.accounts.length} account${state.accounts.length===1?'':'s'}</span></div>
+      <div class="hero-figure mono">${state.currency}<span id="networth-count">0.00</span></div>
+      <p class="hero-sub">Total net worth across every account you track here.</p>
+    </div>
+
+    <div class="grid grid-3" style="margin-top:16px">
+      ${state.accounts.map(a=>{
+        const bal = accountBalance(a.id);
+        const count = state.transactions.filter(t=>t.accountId===a.id).length;
+        return `
+        <div class="panel account-card tilt">
+          <div class="acc-top"><span class="acc-dot" style="background:${a.color}"></span><span class="acc-name">${escapeHtml(a.name)}</span></div>
+          <div class="acc-bal mono" style="color:${bal>=0?'var(--ink)':'var(--expense)'}">${fmtMoney(bal)}</div>
+          <div class="acc-meta">${count} transaction${count===1?'':'s'} · started at ${fmtMoney(a.startingBalance||0)}</div>
+          <div class="acc-actions">
+            <button class="btn btn-ghost btn-sm" data-edit-acct="${a.id}">${ICONS.edit} Edit</button>
+            ${state.accounts.length>1 ? `<button class="btn btn-danger btn-sm" data-del-acct="${a.id}">${ICONS.trash}</button>` : ''}
+          </div>
+        </div>`;
+      }).join('')}
+      <div class="add-account-card" id="add-account-card">${ICONS.plus}<span style="font-size:12.5px; font-weight:600;">Add Account</span></div>
+    </div>
+
+    ${state.accounts.length>1 ? `
+    <div class="panel panel-pad" style="margin-top:16px; display:flex; justify-content:space-between; align-items:center;">
+      <p style="color:var(--ink-muted); font-size:13px;">Moving money between your own accounts doesn't count as income or expense.</p>
+      <button class="btn btn-primary btn-sm" id="btn-transfer">${ICONS.swap} Transfer Between Accounts</button>
+    </div>` : ''}
+  `;
+}
+afterRender.accounts = function(){
+  const el = document.getElementById('networth-count');
+  if(el) animateNumber(el, Math.abs(netWorth()), {decimals:2});
+  enableTilt(document.getElementById('view-root'));
+  document.getElementById('add-account-card').addEventListener('click', openAccountDrawer);
+  document.querySelectorAll('[data-edit-acct]').forEach(b=>b.addEventListener('click', e=>openAccountDrawer(Number(e.currentTarget.dataset.editAcct))));
+  document.querySelectorAll('[data-del-acct]').forEach(b=>b.addEventListener('click', e=>confirmDeleteAccount(Number(e.currentTarget.dataset.delAcct))));
+  const transferBtn = document.getElementById('btn-transfer');
+  if(transferBtn) transferBtn.addEventListener('click', openTransferModal);
+};
+
+function openAccountDrawer(editId){
+  const existing = editId ? state.accounts.find(a=>a.id===editId) : null;
+  let scrim = document.getElementById('drawer-scrim');
+  if(!scrim){ scrim = document.createElement('div'); scrim.id='drawer-scrim'; scrim.className='scrim'; document.body.appendChild(scrim); }
+  let drawer = document.getElementById('tx-drawer');
+  if(!drawer){ drawer = document.createElement('div'); drawer.id='tx-drawer'; drawer.className='drawer'; document.body.appendChild(drawer); }
+
+  drawer.innerHTML = `
+    <div class="drawer-head"><h3>${existing?'Edit Account':'New Account'}</h3><button class="icon-btn" id="drawer-close">${ICONS.x}</button></div>
+    <div class="drawer-body">
+      <div class="field"><label>Account name</label><input id="acct-name" placeholder="e.g. Checking, Cash, Credit Card" value="${existing?escapeHtml(existing.name):''}"></div>
+      <div class="field"><label>Starting balance</label><input class="mono-input" id="acct-start" type="number" step="0.01" value="${existing?existing.startingBalance:'0'}"></div>
+      <div class="field"><label>Color</label>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;" id="acct-color-swatches">
+          ${ACCOUNT_PALETTE.map(c=>`<div data-color="${c}" style="width:28px;height:28px;border-radius:8px;background:${c};cursor:pointer;border:2px solid ${existing&&existing.color===c ? '#0F172A' : 'transparent'};"></div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="drawer-foot">
+      <button class="btn btn-ghost" id="drawer-cancel">Cancel</button>
+      <button class="btn btn-primary" id="drawer-save">${existing?'Save Changes':'Add Account'}</button>
+    </div>
+  `;
+  let chosenColor = existing ? existing.color : ACCOUNT_PALETTE[state.accounts.length % ACCOUNT_PALETTE.length];
+  document.querySelectorAll('#acct-color-swatches [data-color]').forEach(sw=>{
+    sw.addEventListener('click', ()=>{
+      chosenColor = sw.dataset.color;
+      document.querySelectorAll('#acct-color-swatches [data-color]').forEach(s=> s.style.borderColor = s===sw ? '#0F172A' : 'transparent');
+    });
+  });
+  document.getElementById('drawer-close').addEventListener('click', closeTxDrawer);
+  document.getElementById('drawer-cancel').addEventListener('click', closeTxDrawer);
+  document.getElementById('drawer-save').addEventListener('click', async ()=>{
+    const nameEl = document.getElementById('acct-name');
+    const startEl = document.getElementById('acct-start');
+    if(!nameEl.value.trim()){ nameEl.closest('.field').classList.add('invalid'); return; }
+    if(existing){
+      existing.name = nameEl.value.trim();
+      existing.startingBalance = parseFloat(startEl.value)||0;
+      existing.color = chosenColor;
+      toast('Account updated.', 'success');
+    } else {
+      state.accounts.push({ id: state.nextAccountId++, name: nameEl.value.trim(), startingBalance: parseFloat(startEl.value)||0, color: chosenColor });
+      toast('Account added.', 'success');
+    }
+    await saveState();
+    closeTxDrawer();
+    renderShell(); renderView();
+  });
+  requestAnimationFrame(()=>{ scrim.classList.add('open'); drawer.classList.add('open'); });
+  scrim.onclick = closeTxDrawer;
+}
+
+function confirmDeleteAccount(id){
+  const hasTx = state.transactions.some(t=>t.accountId===id);
+  showModal({
+    title: 'Delete this account?',
+    body: hasTx ? `Its transactions will move to your remaining default account. This can't be undone.` : `This account has no transactions yet.`,
+    confirmLabel:'Delete', confirmClass:'btn-danger',
+    onConfirm: async ()=>{
+      state.accounts = state.accounts.filter(a=>a.id!==id);
+      const fallback = state.accounts[0].id;
+      if(state.defaultAccountId===id) state.defaultAccountId = fallback;
+      state.transactions.forEach(t=>{ if(t.accountId===id) t.accountId = fallback; });
+      await saveState();
+      toast('Account deleted.', 'success');
+      renderShell(); renderView();
+    }
+  });
+}
+
+function openTransferModal(){
+  let wrap = document.getElementById('modal-wrap');
+  if(!wrap){ wrap = document.createElement('div'); wrap.id='modal-wrap'; wrap.className='modal-wrap'; document.body.appendChild(wrap); }
+  wrap.innerHTML = `
+    <div class="modal">
+      <h3>Transfer Between Accounts</h3>
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:14px;">
+        <div class="field"><label>From</label><select id="xfer-from">${state.accounts.map(a=>`<option value="${a.id}">${escapeHtml(a.name)}</option>`).join('')}</select></div>
+        <div class="field"><label>To</label><select id="xfer-to">${state.accounts.map(a=>`<option value="${a.id}">${escapeHtml(a.name)}</option>`).join('')}</select></div>
+        <div class="field"><label>Amount</label><input class="mono-input" id="xfer-amount" type="number" step="0.01" min="0.01" placeholder="0.00"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="modal-cancel">Cancel</button>
+        <button class="btn btn-primary" id="xfer-confirm">Transfer</button>
+      </div>
+    </div>`;
+  document.getElementById('modal-cancel').addEventListener('click', ()=> wrap.classList.remove('open'));
+  document.getElementById('xfer-confirm').addEventListener('click', async ()=>{
+    const fromId = Number(document.getElementById('xfer-from').value);
+    const toId = Number(document.getElementById('xfer-to').value);
+    const amount = parseFloat(document.getElementById('xfer-amount').value);
+    if(!amount || amount<=0){ toast('Enter a transfer amount greater than zero.', 'error'); return; }
+    if(fromId===toId){ toast('Choose two different accounts.', 'error'); return; }
+    const date = todayISO(), time = nowHM();
+    state.transactions.push({ id: uid(), date, time, type:'Expense', category:TRANSFER_CATEGORY, amount, description:`Transfer to ${accountName(toId)}`, accountId: fromId });
+    state.transactions.push({ id: uid(), date, time, type:'Income', category:TRANSFER_CATEGORY, amount, description:`Transfer from ${accountName(fromId)}`, accountId: toId });
+    await saveState();
+    wrap.classList.remove('open');
+    toast('Transfer complete.', 'success');
+    renderShell(); renderView();
+  });
+  requestAnimationFrame(()=> wrap.classList.add('open'));
+}
+
+/* ================================================================
+   VIEW: RECURRING
+   ================================================================ */
+function renderRecurring(){
+  const rules = [...state.recurring].sort((a,b)=> a.nextRun < b.nextRun ? -1 : 1);
+  const upcoming = rules.filter(r=>r.active).slice(0,5);
+  const forecast = forecastNextMonth();
+
+  return `
+    <div class="grid grid-12" style="margin-top:14px">
+      <div class="panel span-8">
+        <div class="panel-head">
+          <div><div class="eyebrow">${rules.length} rule${rules.length===1?'':'s'}</div><h3>Recurring Transactions</h3></div>
+          <button class="btn btn-primary btn-sm" id="btn-add-recurring">${ICONS.plus} New Rule</button>
+        </div>
+        ${rules.length===0 ? `
+          <div class="empty">${ICONS.repeat}<h4>Nothing on autopilot yet</h4><p>Add rent, salary, or subscriptions here and they'll log themselves on schedule.</p></div>
+        ` : `
+        <div class="panel-pad">
+          ${rules.map(r=>`
+            <div class="recurring-row">
+              <div class="rec-icon" style="background:${r.type==='Income'?'var(--income-dim)':'var(--expense-dim)'}; color:${r.type==='Income'?'var(--income)':'var(--expense)'}">${r.type==='Income'?ICONS.income:ICONS.expense}</div>
+              <div class="rec-info">
+                <div class="rec-title">${escapeHtml(r.description)}</div>
+                <div class="rec-sub">${r.category} · ${r.frequency==='weekly'?'Weekly':'Monthly'} · next ${fmtDateDisplay(r.nextRun)} · ${accountName(r.accountId)}</div>
+              </div>
+              <div class="rec-amt" style="color:${r.type==='Income'?'var(--income)':'var(--expense)'}">${r.type==='Income'?'+':'−'}${fmtMoney(r.amount)}</div>
+              <div class="rec-toggle ${r.active?'active':''}" data-toggle-rec="${r.id}" title="${r.active?'Pause':'Resume'}"></div>
+              <button class="icon-btn" data-edit-rec="${r.id}">${ICONS.edit}</button>
+              <button class="icon-btn danger" data-del-rec="${r.id}">${ICONS.trash}</button>
+            </div>
+          `).join('')}
+        </div>`}
+      </div>
+      <div class="panel span-4">
+        <div class="panel-head"><div><div class="eyebrow">Next 5</div><h3>Coming Up</h3></div></div>
+        <div class="panel-pad">
+          ${upcoming.length===0 ? `<p style="color:var(--ink-faint); font-size:12.5px;">No active rules yet.</p>` :
+            upcoming.map(r=>`<div class="upcoming-chip"><span>${escapeHtml(r.description)}</span><span class="mono" style="color:${r.type==='Income'?'var(--income)':'var(--expense)'}">${fmtDateDisplay(r.nextRun)}</span></div>`).join('')}
+        </div>
+        <div class="divider" style="margin:0 20px;"></div>
+        <div class="panel-pad">
+          <div class="eyebrow" style="margin-bottom:10px;">Next Month Forecast</div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px;"><span style="color:var(--ink-muted)">Projected income</span><span class="mono" style="color:var(--income); font-weight:600;">${fmtMoney(forecast.income)}</span></div>
+          <div style="display:flex; justify-content:space-between; font-size:13px;"><span style="color:var(--ink-muted)">Projected expense</span><span class="mono" style="color:var(--expense); font-weight:600;">${fmtMoney(forecast.expense)}</span></div>
+          <p style="font-size:11.5px; color:var(--ink-faint); margin-top:10px;">Based on active recurring rules only — not a full prediction.</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+afterRender.recurring = function(){
+  const addBtn = document.getElementById('btn-add-recurring');
+  if(addBtn) addBtn.addEventListener('click', ()=>openRecurringDrawer());
+  document.querySelectorAll('[data-edit-rec]').forEach(b=>b.addEventListener('click', e=>openRecurringDrawer(Number(e.currentTarget.dataset.editRec))));
+  document.querySelectorAll('[data-del-rec]').forEach(b=>b.addEventListener('click', e=>{
+    const id = Number(e.currentTarget.dataset.delRec);
+    showModal({ title:'Delete this recurring rule?', body:'Future occurrences will stop. Already-logged transactions stay in your ledger.', confirmLabel:'Delete', confirmClass:'btn-danger',
+      onConfirm: async ()=>{ state.recurring = state.recurring.filter(r=>r.id!==id); await saveState(); toast('Rule deleted.','success'); renderView(); }});
+  }));
+  document.querySelectorAll('[data-toggle-rec]').forEach(b=>b.addEventListener('click', async e=>{
+    const id = Number(e.currentTarget.dataset.toggleRec);
+    const rule = state.recurring.find(r=>r.id===id);
+    rule.active = !rule.active;
+    await saveState();
+    renderView();
+  }));
+};
+
+function openRecurringDrawer(editId){
+  const existing = editId ? state.recurring.find(r=>r.id===editId) : null;
+  const type = existing ? existing.type : 'Expense';
+  let scrim = document.getElementById('drawer-scrim');
+  if(!scrim){ scrim = document.createElement('div'); scrim.id='drawer-scrim'; scrim.className='scrim'; document.body.appendChild(scrim); }
+  let drawer = document.getElementById('tx-drawer');
+  if(!drawer){ drawer = document.createElement('div'); drawer.id='tx-drawer'; drawer.className='drawer'; document.body.appendChild(drawer); }
+
+  const cats = type==='Income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+  drawer.innerHTML = `
+    <div class="drawer-head"><h3>${existing?'Edit Rule':'New Recurring Rule'}</h3><button class="icon-btn" id="drawer-close">${ICONS.x}</button></div>
+    <div class="drawer-body">
+      <div class="toggle-group" id="rec-type-toggle" style="align-self:flex-start">
+        <button data-type="Income" class="${type==='Income'?'active':''}">Income</button>
+        <button data-type="Expense" class="${type==='Expense'?'active':''}">Expense</button>
+      </div>
+      <div class="field"><label>Description</label><input id="rec-desc" placeholder="e.g. Rent, Netflix, Salary" value="${existing?escapeHtml(existing.description):''}"></div>
+      <div class="field"><label>Category</label><select id="rec-category">${cats.map(c=>`<option value="${c}" ${existing&&existing.category===c?'selected':''}>${c}</option>`).join('')}</select></div>
+      <div class="field"><label>Amount</label><input class="mono-input" id="rec-amount" type="number" step="0.01" min="0.01" value="${existing?existing.amount:''}"></div>
+      <div class="field"><label>Frequency</label>
+        <select id="rec-frequency">
+          <option value="monthly" ${!existing||existing.frequency==='monthly'?'selected':''}>Monthly</option>
+          <option value="weekly" ${existing&&existing.frequency==='weekly'?'selected':''}>Weekly</option>
+        </select>
+      </div>
+      <div class="field"><label>${existing?'Next run':'Starts on'}</label><input type="date" id="rec-start" value="${existing?existing.nextRun:todayISO()}"></div>
+      ${state.accounts.length>1 ? `
+      <div class="field"><label>Account</label><select id="rec-account">${state.accounts.map(a=>`<option value="${a.id}" ${(existing?existing.accountId:state.defaultAccountId)===a.id?'selected':''}>${escapeHtml(a.name)}</option>`).join('')}</select></div>
+      ` : `<input type="hidden" id="rec-account" value="${state.defaultAccountId}">`}
+    </div>
+    <div class="drawer-foot">
+      <button class="btn btn-ghost" id="drawer-cancel">Cancel</button>
+      <button class="btn ${type==='Income'?'btn-income':'btn-expense'}" id="drawer-save">${existing?'Save Changes':'Create Rule'}</button>
+    </div>
+  `;
+  let currentType = type;
+  document.getElementById('rec-type-toggle').querySelectorAll('button').forEach(b=>b.addEventListener('click', ()=>{
+    currentType = b.dataset.type;
+    document.getElementById('rec-type-toggle').querySelectorAll('button').forEach(x=>x.classList.toggle('active', x===b));
+    const catSel = document.getElementById('rec-category');
+    const newCats = currentType==='Income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+    catSel.innerHTML = newCats.map(c=>`<option value="${c}">${c}</option>`).join('');
+    document.getElementById('drawer-save').className = 'btn ' + (currentType==='Income'?'btn-income':'btn-expense');
+  }));
+  document.getElementById('drawer-close').addEventListener('click', closeTxDrawer);
+  document.getElementById('drawer-cancel').addEventListener('click', closeTxDrawer);
+  document.getElementById('drawer-save').addEventListener('click', async ()=>{
+    const descEl = document.getElementById('rec-desc');
+    const amtEl = document.getElementById('rec-amount');
+    const amount = parseFloat(amtEl.value);
+    if(!descEl.value.trim() || !amount || amount<=0){
+      if(!descEl.value.trim()) descEl.closest('.field').classList.add('invalid');
+      if(!amount || amount<=0) amtEl.closest('.field').classList.add('invalid');
+      toast('Fill in a description and an amount greater than zero.', 'error');
+      return;
+    }
+    const rule = {
+      id: existing ? existing.id : state.nextRecurringId++,
+      type: currentType,
+      category: document.getElementById('rec-category').value,
+      amount: Math.round(amount*100)/100,
+      description: descEl.value.trim(),
+      frequency: document.getElementById('rec-frequency').value,
+      nextRun: document.getElementById('rec-start').value,
+      accountId: Number(document.getElementById('rec-account').value) || state.defaultAccountId,
+      active: existing ? existing.active : true,
+    };
+    if(existing){
+      Object.assign(existing, rule);
+      toast('Recurring rule updated.', 'success');
+    } else {
+      state.recurring.push(rule);
+      toast('Recurring rule created.', 'success');
+    }
+    await saveState();
+    closeTxDrawer();
+    renderShell(); renderView();
+  });
+  requestAnimationFrame(()=>{ scrim.classList.add('open'); drawer.classList.add('open'); });
+  scrim.onclick = closeTxDrawer;
+}
+
+/* ================================================================
+   RECAP ("Year in Money")
+   A full-screen, scroll-reveal summary — celebratory rather than
+   clinical, distinct from the plain Reports statement.
+   ================================================================ */
+function openRecap(){
+  const tx = state.transactions;
+  if(tx.length===0){ toast('Add a few transactions first — the recap needs something to celebrate.', 'error'); return; }
+
+  const income = totalIncome(tx), expense = totalExpense(tx), savings = income-expense;
+  const catTotals = categoryTotals('Expense');
+  const topCat = catTotals[0];
+  const biggestExpense = [...tx].filter(t=>t.type==='Expense' && !isTransfer(t)).sort((a,b)=>b.amount-a.amount)[0];
+  const score = healthScore(income, expense);
+
+  const months = lastNMonths(12);
+  const series = monthlySeries(months).map((s,i)=>({ ...s, key: months[i].key }));
+  const withData = series.filter(s=> s.income>0 || s.expense>0);
+  let bestMonth = null;
+  withData.forEach(s=>{ const net = s.income-s.expense; if(!bestMonth || net > bestMonth.net) bestMonth = { ...s, net }; });
+  const positiveMonths = withData.filter(s=> s.income >= s.expense).length;
+
+  let overlay = document.getElementById('recap-overlay');
+  if(!overlay){ overlay = document.createElement('div'); overlay.id='recap-overlay'; overlay.className='recap-overlay'; document.body.appendChild(overlay); }
+
+  overlay.innerHTML = `
+    <button class="btn btn-ghost recap-close" id="recap-close">${ICONS.x} Close</button>
+    <div class="recap-wrap">
+      <div class="recap-section">
+        <div class="recap-kicker">Your Ledger, In Review</div>
+        <div class="recap-big">Here's where<br>your money went.</div>
+        <p class="recap-sub">Across <b style="color:var(--ink)">${tx.length}</b> recorded entries, here's the story your ledger tells.</p>
+      </div>
+
+      <div class="recap-section">
+        <div class="recap-kicker">Total Flow</div>
+        <div class="recap-big mono" style="color:var(--income)">${state.currency}<span id="recap-income">0</span></div>
+        <p class="recap-sub">came in, against <b class="mono" style="color:var(--expense)">${fmtMoney(expense)}</b> that went out.</p>
+        <div class="recap-badge">${savings>=0?'You came out ahead: '+fmtMoney(savings):'A deficit of '+fmtMoney(Math.abs(savings))}</div>
+      </div>
+
+      ${topCat ? `
+      <div class="recap-section">
+        <div class="recap-kicker">Top Category</div>
+        <div class="recap-big" style="color:${catColor(topCat[0])}">${escapeHtml(topCat[0])}</div>
+        <p class="recap-sub">took the largest share of your spending at <b class="mono" style="color:var(--ink)">${fmtMoney(topCat[1])}</b>.</p>
+      </div>` : ''}
+
+      ${biggestExpense ? `
+      <div class="recap-section">
+        <div class="recap-kicker">Biggest Single Expense</div>
+        <div class="recap-big mono">${fmtMoney(biggestExpense.amount)}</div>
+        <p class="recap-sub">"${escapeHtml(biggestExpense.description)}" on ${fmtDateDisplay(biggestExpense.date)}.</p>
+      </div>` : ''}
+
+      ${bestMonth ? `
+      <div class="recap-section">
+        <div class="recap-kicker">Strongest Month</div>
+        <div class="recap-big">${bestMonth.label}</div>
+        <p class="recap-sub">netted you <b class="mono" style="color:${bestMonth.net>=0?'var(--income)':'var(--expense)'}">${fmtMoney(bestMonth.net)}</b> — your best of the last year.</p>
+      </div>` : ''}
+
+      <div class="recap-section">
+        <div class="recap-kicker">Consistency</div>
+        <div class="recap-big mono">${positiveMonths}<span style="font-size:22px; color:var(--ink-faint)">/${withData.length||1} months</span></div>
+        <p class="recap-sub">you spent within what you earned.</p>
+      </div>
+
+      <div class="recap-section">
+        <div class="recap-kicker">Financial Health Score</div>
+        <div class="recap-big mono" style="color:${score>=60?'var(--income)':score>=30?'var(--warn)':'var(--expense)'}">${score}<span style="font-size:24px; color:var(--ink-faint)">/100</span></div>
+        <p class="recap-sub">${score>=60?"A strong position — keep the habits that got you here.":score>=30?"A workable balance, with room to build a cushion.":"Worth a closer look at where the balance tips."}</p>
+        <div class="recap-badge">${ICONS.sparkle} Here's to the next chapter of your ledger</div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('recap-close').addEventListener('click', closeRecap);
+  overlay.classList.add('open');
+
+  const incomeEl = document.getElementById('recap-income');
+  if(incomeEl) setTimeout(()=> animateNumber(incomeEl, income, {decimals:2}), 300);
+
+  const sections = overlay.querySelectorAll('.recap-section');
+  if(reduceMotion || typeof IntersectionObserver === 'undefined'){
+    sections.forEach(s=> s.classList.add('show'));
+  } else {
+    const io = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('show'); });
+    }, { threshold:0.35 });
+    sections.forEach(s=> io.observe(s));
+  }
+
+  setTimeout(fireConfetti, 500);
+}
+function closeRecap(){
+  const overlay = document.getElementById('recap-overlay');
+  if(overlay) overlay.classList.remove('open');
+}
+
 
 /* ================================================================
    VIEW: REPORTS
@@ -1627,15 +2607,157 @@ afterRender.settings = function(){
 };
 
 /* ================================================================
+   COMMAND PALETTE
+   ================================================================ */
+const CMDK_ACTIONS = [
+  {label:'Go to Dashboard', hint:'D', icon:'dashboard', run:()=>{ view='dashboard'; renderShell(); renderView(); }},
+  {label:'Go to Ledger', hint:'L', icon:'ledger', run:()=>{ view='ledger'; renderShell(); renderView(); }},
+  {label:'Go to Accounts', hint:'C', icon:'wallet', run:()=>{ view='accounts'; renderShell(); renderView(); }},
+  {label:'Go to Recurring', hint:'U', icon:'repeat', run:()=>{ view='recurring'; renderShell(); renderView(); }},
+  {label:'Go to Analytics', hint:'A', icon:'analytics', run:()=>{ view='analytics'; renderShell(); renderView(); }},
+  {label:'Go to Budget', hint:'B', icon:'budget', run:()=>{ view='budget'; renderShell(); renderView(); }},
+  {label:'Go to Goals', hint:'G', icon:'goals', run:()=>{ view='goals'; renderShell(); renderView(); }},
+  {label:'Go to Reports', hint:'R', icon:'reports', run:()=>{ view='reports'; renderShell(); renderView(); }},
+  {label:'View Your Year in Money', hint:'Recap', icon:'sparkle', run:()=> openRecap()},
+  {label:'Add Income', hint:'', icon:'income', run:()=> openTxDrawer('Income')},
+  {label:'Add Expense', hint:'N', icon:'expense', run:()=> openTxDrawer('Expense')},
+  {label:'Transfer Between Accounts', hint:'', icon:'swap', run:()=> { if(state.accounts.length<2){ toast('Add a second account first.', 'error'); return; } openTransferModal(); }},
+  {label:'New Recurring Rule', hint:'', icon:'repeat', run:()=> openRecurringDrawer()},
+  {label:'Backup Now', hint:'', icon:'archive', run:()=> backupNow()},
+  {label:'Toggle Sound Effects', hint:'', icon:'soundOn', run: async ()=>{ state.soundEnabled=!state.soundEnabled; unlockAudio(); await saveState(); renderShell(); }},
+];
+
+/* Parses free text into a quick-add transaction guess. Returns null
+   if no numeric amount is found (so the palette falls back to the
+   navigation/action list instead). */
+function parseQuickAdd(text){
+  const numMatch = text.match(/(\d+(\.\d+)?)/);
+  if(!numMatch) return null;
+  const amount = parseFloat(numMatch[1]);
+  if(!amount || amount<=0) return null;
+
+  const lower = text.toLowerCase();
+  let type = 'Expense';
+  if(/\b(income|in|received|got|earned|salary|\+)\b/.test(lower)) type = 'Income';
+  if(/\b(expense|spent|paid|out|bought|-)\b/.test(lower) && !/\bincome\b/.test(lower)) type = 'Expense';
+
+  const words = lower.replace(numMatch[0], ' ').replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(Boolean);
+  const skip = new Set(['income','expense','in','out','received','spent','paid','got','earned','bought','for','a','an','the','on']);
+  let category = null;
+  for(const w of words){
+    if(CATEGORY_SYNONYMS[w]){ category = CATEGORY_SYNONYMS[w]; break; }
+  }
+  const cats = type==='Income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+  if(!category || !cats.includes(category)){
+    category = type==='Income' ? 'Other' : 'Other';
+  }
+  const descWords = words.filter(w=>!skip.has(w));
+  const description = descWords.length ? descWords.join(' ').replace(/\b\w/g, c=>c.toUpperCase()) : (type==='Income'?'Income':'Expense');
+
+  return { type, amount: Math.round(amount*100)/100, category, description };
+}
+
+let cmdkSelIndex = 0;
+function openCmdk(){
+  let wrap = document.getElementById('cmdk-wrap');
+  if(!wrap){
+    wrap = document.createElement('div');
+    wrap.id = 'cmdk-wrap';
+    wrap.className = 'cmdk-wrap';
+    wrap.innerHTML = `
+      <div class="cmdk">
+        <div class="cmdk-input-row">${ICONS.search}<input id="cmdk-input" placeholder="Type to navigate, or try “expense 12 coffee”…" autocomplete="off"><span class="cmdk-hint">Esc</span></div>
+        <div class="cmdk-body" id="cmdk-body"></div>
+      </div>`;
+    document.body.appendChild(wrap);
+    wrap.addEventListener('click', e=>{ if(e.target===wrap) closeCmdk(); });
+    document.getElementById('cmdk-input').addEventListener('input', renderCmdkResults);
+    document.getElementById('cmdk-input').addEventListener('keydown', handleCmdkKeydown);
+  }
+  document.getElementById('cmdk-input').value = '';
+  renderCmdkResults();
+  wrap.classList.add('open');
+  setTimeout(()=> document.getElementById('cmdk-input').focus(), 50);
+}
+function closeCmdk(){
+  const wrap = document.getElementById('cmdk-wrap');
+  if(wrap) wrap.classList.remove('open');
+}
+function renderCmdkResults(){
+  const input = document.getElementById('cmdk-input');
+  const body = document.getElementById('cmdk-body');
+  const text = input.value.trim();
+  cmdkSelIndex = 0;
+
+  const parsed = text.length>1 ? parseQuickAdd(text) : null;
+
+  if(parsed){
+    body.innerHTML = `
+      <div class="cmdk-preview">
+        <div class="row"><span class="pill ${parsed.type==='Income'?'income':'expense'}">${parsed.type}</span><span class="amt mono" style="color:${parsed.type==='Income'?'var(--income)':'var(--expense)'}">${fmtMoney(parsed.amount)}</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:12.5px; color:var(--ink-muted);"><span class="cat-chip"><span class="dot" style="background:${catColor(parsed.category)}"></span>${parsed.category}</span><span>${escapeHtml(parsed.description)}</span></div>
+      </div>
+      <div class="cmdk-item sel" id="cmdk-confirm" data-quickadd="1">${ICONS.plus} Add this ${parsed.type.toLowerCase()} <span class="cmdk-sub">Enter</span></div>
+    `;
+    document.getElementById('cmdk-confirm').addEventListener('click', ()=> confirmCmdkQuickAdd(parsed));
+    return;
+  }
+
+  const filtered = CMDK_ACTIONS.filter(a=> !text || a.label.toLowerCase().includes(text.toLowerCase()));
+  if(filtered.length===0){
+    body.innerHTML = `<div class="cmdk-empty">No matches. Try including a number to quick-add a transaction, e.g. "coffee 5".</div>`;
+    return;
+  }
+  body.innerHTML = `
+    <div class="cmdk-section-label">Jump to / Do</div>
+    ${filtered.map((a,i)=>`
+      <div class="cmdk-item ${i===0?'sel':''}" data-idx="${i}">${ICONS[a.icon]}<span>${a.label}</span>${a.hint?`<span class="cmdk-sub">${a.hint}</span>`:''}</div>
+    `).join('')}
+  `;
+  body.querySelectorAll('[data-idx]').forEach(el=>{
+    el.addEventListener('click', ()=>{ filtered[Number(el.dataset.idx)].run(); closeCmdk(); });
+  });
+}
+async function confirmCmdkQuickAdd(parsed){
+  const tx = { id: uid(), date: todayISO(), time: nowHM(), type: parsed.type, category: parsed.category, amount: parsed.amount, description: parsed.description, accountId: state.defaultAccountId };
+  state.transactions.push(tx);
+  await saveState();
+  playStamp(parsed.type, parsed.type==='Income'?'Received':'Recorded', parsed.amount);
+  closeCmdk();
+  renderShell(); renderView();
+}
+function handleCmdkKeydown(e){
+  const body = document.getElementById('cmdk-body');
+  if(e.key==='Escape'){ closeCmdk(); return; }
+  if(e.key==='Enter'){
+    const sel = body.querySelector('.cmdk-item.sel');
+    if(sel){ sel.click(); }
+    return;
+  }
+  if(e.key==='ArrowDown' || e.key==='ArrowUp'){
+    e.preventDefault();
+    const items = [...body.querySelectorAll('.cmdk-item')];
+    if(items.length===0) return;
+    let idx = items.findIndex(i=>i.classList.contains('sel'));
+    items[idx]?.classList.remove('sel');
+    idx = e.key==='ArrowDown' ? Math.min(items.length-1, idx+1) : Math.max(0, idx-1);
+    items[idx].classList.add('sel');
+    items[idx].scrollIntoView({block:'nearest'});
+  }
+}
+
+/* ================================================================
    INIT
    ================================================================ */
 document.addEventListener('keydown', (e)=>{
+  const isMeta = e.metaKey || e.ctrlKey;
+  if(isMeta && e.key.toLowerCase()==='k'){ e.preventDefault(); openCmdk(); return; }
   if(e.target.tagName==='INPUT' || e.target.tagName==='TEXTAREA' || e.target.tagName==='SELECT') return;
-  const map = {d:'dashboard', l:'ledger', a:'analytics', b:'budget', g:'goals', r:'reports', s:'settings'};
+  const map = {d:'dashboard', l:'ledger', c:'accounts', u:'recurring', a:'analytics', b:'budget', g:'goals', r:'reports', s:'settings'};
   const key = e.key.toLowerCase();
   if(map[key]){ view = map[key]; renderShell(); renderView(); }
   if(key==='n'){ openTxDrawer('Expense'); }
-  if(key==='escape'){ closeTxDrawer(); const mw=document.getElementById('modal-wrap'); if(mw) mw.classList.remove('open'); }
+  if(key==='escape'){ closeTxDrawer(); closeCmdk(); closeRecap(); const mw=document.getElementById('modal-wrap'); if(mw) mw.classList.remove('open'); }
 });
 
 async function init(){
