@@ -1376,7 +1376,7 @@ afterRender.dashboard = function(){
     } else {
       charts.donut = new Chart(donutCtx, {
         type:'doughnut',
-        data:{ labels: catTotals.map(c=>c[0]), datasets:[{ data: catTotals.map(c=>c[1]), backgroundColor: catTotals.map(c=>catColor(c[0])), borderColor:'#14281F', borderWidth:2 }] },
+        data:{ labels: catTotals.map(c=>c[0]), datasets:[{ data: catTotals.map(c=>c[1]), backgroundColor: catTotals.map(c=>catColor(c[0])), borderColor:'#FFFFFF', borderWidth:2 }] },
         options:{ responsive:true, maintainAspectRatio:true, cutout:'68%',
           plugins:{ legend:{ position:'right', labels:{ color:'#64748B', boxWidth:9, boxHeight:9, usePointStyle:true, font:{family:'Inter', size:11} } },
           tooltip: tooltipStyle() } }
@@ -1782,7 +1782,7 @@ afterRender.analytics = function(){
   if(ctx && window.Chart && expTotals.length){
     charts.analyticsDonut = new Chart(ctx, {
       type:'doughnut',
-      data:{ labels: expTotals.map(c=>c[0]), datasets:[{ data: expTotals.map(c=>c[1]), backgroundColor: expTotals.map(c=>catColor(c[0])), borderColor:'#14281F', borderWidth:2 }] },
+      data:{ labels: expTotals.map(c=>c[0]), datasets:[{ data: expTotals.map(c=>c[1]), backgroundColor: expTotals.map(c=>catColor(c[0])), borderColor:'#FFFFFF', borderWidth:2 }] },
       options:{ responsive:true, cutout:'62%', plugins:{ legend:{ position:'bottom', labels:{ color:'#64748B', boxWidth:9, boxHeight:9, usePointStyle:true, font:{family:'Inter', size:10.5} } }, tooltip: tooltipStyle() } }
     });
   }
