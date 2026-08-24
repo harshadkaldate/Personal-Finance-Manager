@@ -23,4 +23,4 @@ FinanceManager/
 ├── README.md        # Documentation
 │
 ├── data/            # Stores transactions.dat
-└── reports/         # Output directory for .txt reports
+└── reports/         # Output directory for .txt reports.
